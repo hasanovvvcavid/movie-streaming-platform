@@ -7,6 +7,8 @@ import Navbar from "../../components/Navbar/Navbar";
 import { ORIGINAL_IMG_BASE_URL, SMALL_IMG_BASE_URL } from "../../src/utils/constants";
 import ReactPlayer from "react-player";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { formatReleaseDate } from "../../src/utils/dateConverter";
+import WatchPageSkeleton from "../../components/skeletons/WatchPageSkeleton";
 
 const WatchPage = () => {
   const { id } = useParams();
@@ -92,7 +94,7 @@ const WatchPage = () => {
   if (loading)
     return (
       <div className="min-h-screen bg-black p-10">
-        {/* <WatchPageSkeleton /> */}
+        <WatchPageSkeleton />
       </div>
     );
 
@@ -178,7 +180,7 @@ const WatchPage = () => {
               {content?.title || content?.name}
             </h2>
 
-            {/* <p className="mt-2 text-lg">
+            <p className="mt-2 text-lg">
               {formatReleaseDate(
                 content?.release_date || content?.first_air_date
               )}{" "}
@@ -188,7 +190,7 @@ const WatchPage = () => {
               ) : (
                 <span className="text-green-600">PG-13</span>
               )}{" "}
-            </p> */}
+            </p>
             <p className="mt-4 text-lg">{content?.overview}</p>
           </div>
           <img
