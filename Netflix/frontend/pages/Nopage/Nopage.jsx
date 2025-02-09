@@ -25,7 +25,7 @@ const Nopage = () => {
     //     </Link>
     //   </main>
     // </div>
-    <div>
+    <div className="nf-all">
       <div className="nf-top bg-black">
         <div className="nf-top-container max-w-6xl p-4 ">
           <div className="top-image">

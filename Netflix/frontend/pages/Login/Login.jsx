@@ -7,7 +7,7 @@ const Login = () => {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { login } = useAuthStore();
+  const { login, isLoggingIn } = useAuthStore();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -50,8 +50,8 @@ const Login = () => {
               />
             </div>
 
-            <button >
-              Sign In
+            <button disabled={isLoggingIn}>
+              {isLoggingIn ? "Loading..." : "Sign Up"}
             </button>
           </form>
 

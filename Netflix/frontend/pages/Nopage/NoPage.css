@@ -1,3 +1,4 @@
+
 .nopage{
     background-position: center;
     background-repeat: no-repeat;
@@ -19,4 +20,7 @@
     a{
        text-align: center;
     }
+}
+.nf-all{
+    text-align: center;
 }
