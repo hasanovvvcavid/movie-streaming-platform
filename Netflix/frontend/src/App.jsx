@@ -11,6 +11,7 @@ import { useEffect } from "react";
 import { Loader } from "lucide-react";
 import WatchPage from "../pages/WatchPage/WatchPage";
 import SearchPage from "../pages/SearchPage/SearchPage";
+import SearchHistoryPage from "../pages/SearchHistoryPage/SearchHistoryPage";
 
 function App() {
 
@@ -42,12 +43,9 @@ function App() {
           <Route path="/login" element={!user ?  <Login /> : <Navigate to={"/"} /> } />
           <Route path="/register" element={!user ? <Register />: <Navigate to={"/"} /> } />
           <Route path='/watch/:id' element={user ? <WatchPage /> : <Navigate to={"/login"} />} />
-
-
           <Route path='/search' element={user ? <SearchPage /> : <Navigate to={"/login"} />} />
-
-
-          {/* <Route path="*" element={<Nopage />} /> */}
+          <Route path='/history' element={user ? <SearchHistoryPage /> : <Navigate to={"/login"} />} />
+          <Route path="*" element={<Nopage />} />
       </Routes>
 
       <Toaster />

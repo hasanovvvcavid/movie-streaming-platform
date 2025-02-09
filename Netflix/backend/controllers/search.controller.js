@@ -8,7 +8,7 @@ export async function searchPerson(req, res) {
       `https://api.themoviedb.org/3/search/person?query=${query}&include_adult=false&language=en-US&page=1`
     );
     if (response.results.length === 0) {
-      res.status(404).json(null);
+      return res.status(404).json(null);
     }
 
     await User.findByIdAndUpdate(req.user._id, {
@@ -31,7 +31,7 @@ export async function searchMovie(req, res) {
         `https://api.themoviedb.org/3/search/movie?query=${query}&include_adult=false&language=en-US&page=1`
       );
       if (response.results.length === 0) {
-        res.status(404).json(null);
+        return res.status(404).json(null);
       }
 
       await User.findByIdAndUpdate(req.user._id, {
@@ -55,7 +55,7 @@ export async function searchTv(req, res) {
           `https://api.themoviedb.org/3/search/tv?query=${query}&include_adult=false&language=en-US&page=1`
         );
         if (response.results.length === 0) {
-          res.status(404).json(null);
+         return res.status(404).json(null);
         }
   
         await User.findByIdAndUpdate(req.user._id, {
