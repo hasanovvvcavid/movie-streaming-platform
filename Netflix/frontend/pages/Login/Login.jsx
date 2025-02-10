@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./Login.css";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { useAuthStore } from "../../store/authUser";
 
 const Login = () => {
@@ -8,10 +8,15 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { login, isLoggingIn } = useAuthStore();
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     login({ email, password });
+    setTimeout(() => {
+      navigate("/");
+    }, 1000);
+
   };
 
 
@@ -25,7 +30,7 @@ const Login = () => {
 
       <div className="form-container">
         <div className="form-box">
-          <h1>Sign Up</h1>
+          <h1>Sign In</h1>
 
           <form onSubmit={handleLogin}>
             <div className="input-group">

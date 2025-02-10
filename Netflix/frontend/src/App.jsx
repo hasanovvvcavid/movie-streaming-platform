@@ -40,7 +40,7 @@ function App() {
       <Routes>
         
           <Route path="/" element={<Home />} />
-          <Route path="/login" element={!user ?  <Login /> : <Navigate to={"/"} /> } />
+          <Route path="/login" element={<Login /> } />
           <Route path="/register" element={!user ? <Register />: <Navigate to={"/"} /> } />
           <Route path='/watch/:id' element={user ? <WatchPage /> : <Navigate to={"/login"} />} />
           <Route path='/search' element={user ? <SearchPage /> : <Navigate to={"/login"} />} />

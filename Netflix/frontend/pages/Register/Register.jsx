@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./Register.css";
-import { Link } from "react-router";
+import { Link, Navigate, useNavigate } from "react-router";
 import { useAuthStore } from "../../store/authUser";
+import toast from "react-hot-toast";
 
 const Register = () => {
   const { searchParams } = new URL(document.location);
   const emailValue = searchParams.get("email");
+  const navigate = useNavigate();
 
   const [email, setEmail] = useState(emailValue || "");
   const [username, setUsername] = useState("");
@@ -16,8 +18,21 @@ const Register = () => {
   const handleSignUp = async (e) => {
     e.preventDefault();
     signup({ email, username, password });
+    navigate("/login");
+    toast.success("Please verify your email to login");
 
   };
+
+
+  // useEffect(() => {
+  //   const verifyEmail = async () => {
+  //     try {
+  //       await axios.get(`${SERVER_LINK}/api/v1/auth/verify-email/${token}`);
+  //     } catch (error) {
+  //     }
+  //   };
+  //   verifyEmail();
+  // }, [token]);
 
   return (
     <div className="hero-bg">
@@ -29,7 +44,7 @@ const Register = () => {
 
       <div className="form-container">
         <div className="form-box">
-          <h1>Sign In</h1>
+          <h1>Sign Up</h1>
 
           <form onSubmit={handleSignUp}>
             <div className="input-group">
