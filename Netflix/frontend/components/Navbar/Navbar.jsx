@@ -52,7 +52,7 @@ const Navbar = () => {
           <Search className="size-6 cursor-pointer" />
         </Link>
         <img
-          src={user?.image}
+          src={`http://localhost:3000/${user?.image}`}
           alt="Avatar"
           className="h-8 rounded cursor-pointer"
         />

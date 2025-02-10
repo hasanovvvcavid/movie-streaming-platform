@@ -44,6 +44,15 @@ export async function signup(req, res) {
       expiresIn: "1h",
     });
 
+    let imageUrl;
+    if (req.file) {
+      const { filename } = req.file; 
+      imageUrl = `images/${filename}`.replace(/\\/g, "/"); 
+    } else {
+      const PROFILE_PICS = ["/profile1.png", "/profile2.png", "/profile3.png"];
+      imageUrl = PROFILE_PICS[Math.floor(Math.random() * PROFILE_PICS.length)];
+    }
+
     const exsistingUserByUsername = await User.findOne({ username: username });
 
     if (exsistingUserByUsername) {
@@ -52,17 +61,17 @@ export async function signup(req, res) {
         .json({ success: false, message: "Username already in use" });
     }
 
-    const PROFILE_PICS = ["/profile1.png", "/profile2.png", "/profile3.png"];
+    // const PROFILE_PICS = ["/profile1.png", "/profile2.png", "/profile3.png"];
 
-    const image = PROFILE_PICS[Math.floor(Math.random() * PROFILE_PICS.length)];
+    // const image = PROFILE_PICS[Math.floor(Math.random() * PROFILE_PICS.length)];
 
     const newUser = new User({
       email,
       username,
-      isVerified: false, // nodemailer  
+      isVerified: false, // nodemailer
       verificationToken, // nodemailer
       password: hashedPassword,
-      image,
+      image: imageUrl,
     });
 
     await sendVerificationEmail(email, verificationToken); //nodemailer
@@ -74,9 +83,15 @@ export async function signup(req, res) {
       .status(201)
       .json({ success: true, user: { ...newUser._doc, password: "" } });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    console.error("Signup Error:", error); // Log'a bakın
+    res.status(500).json({ 
+      success: false, 
+      message: error.message || "Signup failed due to server error" 
+    });
   }
+
+  console.log("File:", req.file);
+  // console.log("Body:", req.body);
 }
 
 export async function login(req, res) {
@@ -133,6 +148,7 @@ export async function logout(req, res) {
 
 export async function authCheck(req, res) {
   try {
+    console.log("Authenticated User:", req.user);
     res.status(200).json({ success: true, user: req.user });
   } catch (error) {
     console.error(error);
@@ -142,20 +158,18 @@ export async function authCheck(req, res) {
 
 export const verifyEmail = async (req, res) => {
   try {
-    const {token} = req.params;
+    const { token } = req.params;
 
     if (!token) {
       return res.status(401).json({ message: "Access Denied" });
     }
 
-    // Token'ı doğrula
     const decoded = jwt.verify(token, ENV_VARS.JWT_SECRET);
 
     if (!decoded) {
       return res.status(400).json({ error: "Invalid or expired token" });
     }
 
-    // Kullanıcıyı bul
     const user = await User.findOne({ email: decoded.email });
 
     if (!user) return res.status(400).json({ message: "Invalid token" });
@@ -164,9 +178,8 @@ export const verifyEmail = async (req, res) => {
       return res.status(400).json({ message: "Email is already verified" });
     }
 
-    // Kullanıcıyı doğrula
     user.isVerified = true;
-    user.verificationToken = null; // Tokenı sıfırla
+    user.verificationToken = null;
     await user.save();
 
     res.status(200).json({ message: "Email verified successfully!" });

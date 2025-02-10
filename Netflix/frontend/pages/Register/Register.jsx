@@ -12,27 +12,28 @@ const Register = () => {
   const [email, setEmail] = useState(emailValue || "");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [image, setImage] = useState(null);
 
   const { signup, isSigningUp } = useAuthStore();
 
   const handleSignUp = async (e) => {
     e.preventDefault();
-    signup({ email, username, password });
-    navigate("/login");
-    toast.success("Please verify your email to login");
 
+    // FormData oluştur
+    const formData = new FormData();
+    formData.append("email", email);
+    formData.append("username", username);
+    formData.append("password", password);
+    formData.append("file", image)
+
+    try {
+      await signup(formData); // ✅ FormData'yı gönder
+      toast.success("Please verify your email to login");
+      navigate("/login");
+    } catch (error) {
+      // Hata zaten authStore'da gösteriliyor
+    }
   };
-
-
-  // useEffect(() => {
-  //   const verifyEmail = async () => {
-  //     try {
-  //       await axios.get(`${SERVER_LINK}/api/v1/auth/verify-email/${token}`);
-  //     } catch (error) {
-  //     }
-  //   };
-  //   verifyEmail();
-  // }, [token]);
 
   return (
     <div className="hero-bg">
@@ -47,6 +48,19 @@ const Register = () => {
           <h1>Sign Up</h1>
 
           <form onSubmit={handleSignUp}>
+          <div className="input-group">
+              <label htmlFor="image">Email</label>
+              <input
+                type="file"
+                placeholder="Image"
+                id="image"
+                // value={image}
+                accept="image/*"
+                onChange={(e) => setImage(e.target.files[0])}
+                
+                // onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
             <div className="input-group">
               <label htmlFor="email">Email</label>
               <input
