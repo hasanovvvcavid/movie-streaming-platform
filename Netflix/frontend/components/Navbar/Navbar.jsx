@@ -4,8 +4,7 @@ import { Link } from "react-router";
 import { useAuthStore } from "../../store/authUser";
 import { LogOut, Menu, Search } from "lucide-react";
 import { useContentStore } from "../../store/content";
-
-
+import "./Navbar.css";
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -44,6 +43,12 @@ const Navbar = () => {
           <Link to="/history" className="hover:underline">
             Search History
           </Link>
+
+          {user?.admin && (
+            <Link to="/admin" className="hover:underline">
+              Admin Panel
+            </Link>
+          )}
         </div>
       </div>
 
@@ -52,9 +57,9 @@ const Navbar = () => {
           <Search className="size-6 cursor-pointer" />
         </Link>
         <img
-          src={`http://localhost:3000/${user?.image}`}
+          src={`./public/${user?.image}`}
           alt="Avatar"
-          className="h-8 rounded cursor-pointer"
+          className="h-8 cursor-pointer profile-image"
         />
         <LogOut className="size-6 cursor-pointer" onClick={logout} />
         <div className="sm:hidden">

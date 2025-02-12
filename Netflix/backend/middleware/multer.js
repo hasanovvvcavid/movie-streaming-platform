@@ -1,9 +1,8 @@
-// middlewares/multer.middleware.js
 import multer from "multer";
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "backend/images/"); // Dosyaların kaydedileceği klasör
+    cb(null, "frontend/public/images"); 
   },
   filename: (req, file, cb) => {
     cb(null, `${Date.now()}${file.originalname}`);

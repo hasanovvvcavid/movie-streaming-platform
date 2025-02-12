@@ -1,0 +1,62 @@
+.hero-bg {
+  height: 100vh;
+  width: 100%;
+
+  header {
+    max-width: 96rem;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+
+    a {
+      img {
+        width: 13rem;
+      }
+    }
+  }
+}
+
+.admin-container {
+  max-width: 1270px;
+  margin: 0 auto;
+
+  body {
+    width: 700px;
+    margin: 20px auto;
+    font-family: arial;
+  }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+
+  table td {
+    font-size: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .country_name-cell {
+    width: 200px;
+  }
+
+  .code-cell {
+    width: 200px;
+    color: red;
+  }
+
+  .pop96-cell {
+    text-align: right;
+  }
+
+  th {
+    text-align: left;
+  }
+}
+.user-table {
+  width: 100%;
+  border-color: white;
+}

@@ -108,3 +108,16 @@
       }
     }
   }
+
+  input[type="file"]::-webkit-file-upload-button {
+    visibility: hidden;
+}
+input[type="file"]::before {
+    content: 'Upload Image'; 
+    display: inline-block;
+    background: #007bff;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+}

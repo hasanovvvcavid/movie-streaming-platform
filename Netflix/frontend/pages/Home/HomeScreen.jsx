@@ -8,6 +8,7 @@ import useGetTrendingContent from "../../src/hooks/useGetTrendingContent";
 import { useContentStore } from "../../store/content";
 import { MOVIE_CATEGORIES, ORIGINAL_IMG_BASE_URL, TV_CATEGORIES } from "../../src/utils/constants";
 import MovieSlider from "../../components/MovieSlider/Movieslider";
+import "./HomeScreen.css";
 
 const HomeScreen = () => {
   //   const { logout } = useAuthStore()
@@ -71,7 +72,7 @@ const HomeScreen = () => {
             </p>
           </div>
 
-          <div className="flex mt-8">
+          <div className="flex mt-8 main-screen-movie">
             <Link
               to={`/watch/${trendingContent?.id}`}
               className="bg-white hover:bg-white/80 text-black font-bold py-2 px-4 rounded mr-4 flex

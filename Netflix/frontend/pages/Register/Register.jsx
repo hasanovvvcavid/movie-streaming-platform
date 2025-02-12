@@ -49,10 +49,10 @@ const Register = () => {
 
           <form onSubmit={handleSignUp}>
           <div className="input-group">
-              <label htmlFor="image">Email</label>
+              <label htmlFor="image">Image</label>
               <input
                 type="file"
-                placeholder="Image"
+                placeholder=""
                 id="image"
                 // value={image}
                 accept="image/*"

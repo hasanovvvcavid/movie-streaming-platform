@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import { generateTokenAndSendCookie } from "../utils/generateToken.js";
 import { ENV_VARS } from "../config/envVars.js";
 import { sendVerificationEmail } from "../utils/sendEmail.js";
+import e from "express";
 
 export async function signup(req, res) {
   try {
@@ -46,8 +47,8 @@ export async function signup(req, res) {
 
     let imageUrl;
     if (req.file) {
-      const { filename } = req.file; 
-      imageUrl = `images/${filename}`.replace(/\\/g, "/"); 
+      const { filename } = req.file;
+      imageUrl = `images/${filename}`.replace(/\\/g, "/");
     } else {
       const PROFILE_PICS = ["/profile1.png", "/profile2.png", "/profile3.png"];
       imageUrl = PROFILE_PICS[Math.floor(Math.random() * PROFILE_PICS.length)];
@@ -84,9 +85,9 @@ export async function signup(req, res) {
       .json({ success: true, user: { ...newUser._doc, password: "" } });
   } catch (error) {
     console.error("Signup Error:", error); // Log'a bakın
-    res.status(500).json({ 
-      success: false, 
-      message: error.message || "Signup failed due to server error" 
+    res.status(500).json({
+      success: false,
+      message: error.message || "Signup failed due to server error",
     });
   }
 
@@ -187,3 +188,45 @@ export const verifyEmail = async (req, res) => {
     res.status(500).json({ error: "Invalid or expired token" });
   }
 };
+
+export const getUsers = async (req, res) => {
+  try {
+    const users = await User.find().select("+password");
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching users" });
+  }
+};
+
+export const makeAdmin = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { admin } = req.body;
+
+    const user = await User.findByIdAndUpdate(id, { admin }, { new: true });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ message: "Error updating admin status" });
+  }
+};
+
+export const deleteUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const deletedUser = await User.findByIdAndDelete(id);
+    
+    if (!deletedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    
+    res.status(200).json({ message: "User deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Error deleting user" });
+  }
+}
