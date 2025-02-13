@@ -4,8 +4,9 @@ import Home from "../pages/Home/Home";
 import Login from "../pages/Login/Login";
 import Register from "../pages/Register/Register";
 import Nopage from "../pages/Nopage/Nopage";
-import Layout from "../components/Layout/Layout";
 import { Toaster } from "react-hot-toast";
+import { ToastContainer } from "react-toastify";
+
 import { useAuthStore } from "../store/authUser";
 import { useEffect } from "react";
 import { Loader } from "lucide-react";
@@ -49,9 +50,11 @@ function App() {
           <Route path='/admin' element={user?.admin ? <Admin /> : <Navigate to={"/"} />} />
 
           <Route path="*" element={<Nopage />} />
+
       </Routes>
 
       <Toaster />
+      <ToastContainer />
     </>
   );
 }

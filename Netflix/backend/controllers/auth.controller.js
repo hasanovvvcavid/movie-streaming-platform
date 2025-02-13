@@ -4,7 +4,9 @@ import jwt from "jsonwebtoken";
 import { generateTokenAndSendCookie } from "../utils/generateToken.js";
 import { ENV_VARS } from "../config/envVars.js";
 import { sendVerificationEmail } from "../utils/sendEmail.js";
-import e from "express";
+import { fileURLToPath } from "url";
+import path from "path";
+import fs from "fs";
 
 export async function signup(req, res) {
   try {
@@ -218,15 +220,67 @@ export const makeAdmin = async (req, res) => {
 export const deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
-    
-    const deletedUser = await User.findByIdAndDelete(id);
-    
-    if (!deletedUser) {
-      return res.status(404).json({ message: "User not found" });
+    const user = await User.findByIdAndDelete(id);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
     }
-    
-    res.status(200).json({ message: "User deleted successfully" });
+
+    res.status(204).json(); 
   } catch (error) {
-    res.status(500).json({ message: "Error deleting user" });
+    res.status(500).json({ error: error.message });
   }
-}
+};
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+export const updateUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updates = req.body;
+    const file = req.file;
+
+    
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    
+    const updateData = {
+      username: updates.username || user.username,
+      email: updates.email || user.email,
+    };
+
+   
+    if (updates.password && updates.password.trim() !== "") {
+      const salt = await bcryptjs.genSalt(10);
+      updateData.password = await bcryptjs.hash(updates.password, salt);
+    }
+
+    
+    if (file) {
+      
+      if (user.image) {
+        const oldImagePath = path.join(__dirname, "../../public", user.image);
+        await fs.promises.unlink(oldImagePath).catch(console.error);
+      }
+      updateData.image = `images/${file.filename}`;
+    }
+
+    
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      updateData,
+      { new: true, runValidators: true }
+    ).select("-password");
+
+    res.json(updatedUser);
+  } catch (error) {
+    console.error("Update error:", error);
+    res.status(400).json({
+      error: error.message || "User update failed",
+    });
+  }
+};

@@ -2,6 +2,11 @@ import * as React from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
+import { useEffect } from "react";
+import { useState } from "react";
+import axios from "axios";
+import { toast } from "react-hot-toast";
+import { formatReleaseDateToSec } from "../../src/utils/dateConverterToSec";
 
 const style = {
   position: "absolute",
@@ -15,12 +20,69 @@ const style = {
   p: 4,
 };
 
-export default function BasicModal({ open, handleClose, selectedUser }) {
+export default function BasicModal({ open, selectedUser, onClose, onUpdate }) {
+  const [formData, setFormData] = useState({
+    username: selectedUser?.username || "",
+    email: selectedUser?.email || "",
+    password: "",
+  });
+
+  const [file, setFile] = useState(null);
+
+  useEffect(() => {
+    if (selectedUser) {
+      setFormData({
+        username: selectedUser.username,
+        email: selectedUser.email,
+        password: "",
+      });
+      setFile(null);
+    }
+  }, [selectedUser]);
+
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const formPayload = new FormData();
+      formPayload.append("username", formData.username);
+      formPayload.append("email", formData.email);
+
+      if (formData.password) {
+        formPayload.append("password", formData.password);
+      }
+
+      if (file) {
+        formPayload.append("image", file);
+      }
+
+      const { data } = await axios.put(
+        `/api/v1/auth/update/${selectedUser._id}`,
+        formPayload,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      onUpdate(data);
+      toast.success("User updated successfully");
+      onClose();
+    } catch (error) {
+      console.error("Updated wrong", error);
+      toast.error(error.response?.data?.error || "Something went wrong");
+    }
+  };
   return (
     <div>
       <Modal
-        open={open} // Modal açılma durumu
-        onClose={handleClose}
+        open={open} 
+        onClose={onClose} 
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
@@ -28,18 +90,20 @@ export default function BasicModal({ open, handleClose, selectedUser }) {
           <Typography id="modal-modal-title" variant="h6" component="h2">
             Update User
           </Typography>
-          <form action="">
+          <form action="" onSubmit={handleSubmit}>
             <div className="mb-3">
               <label htmlFor="image" className="form-label">
                 Image
               </label>
               <input
-                type="url"
+                type="file"
                 className="form-control"
                 id="image"
                 placeholder="image"
-                required
+                // required
                 accept="image/*"
+                // value={formData.image}
+                onChange={handleFileChange}
                 name="image"
               />
             </div>
@@ -52,8 +116,12 @@ export default function BasicModal({ open, handleClose, selectedUser }) {
                 className="form-control"
                 id="username"
                 placeholder="Username"
+                value={formData.username}
+                onChange={(e) =>
+                  setFormData({ ...formData, username: e.target.value })
+                }
                 required
-                name="title"
+                name="username"
               />
             </div>
             <div className="mb-3">
@@ -65,8 +133,13 @@ export default function BasicModal({ open, handleClose, selectedUser }) {
                 className="form-control"
                 id="email"
                 placeholder="Email"
+                value={formData.email}
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
                 required
                 name="email"
+                disabled
               />
             </div>
             <div className="mb-3">
@@ -78,11 +151,14 @@ export default function BasicModal({ open, handleClose, selectedUser }) {
                 className="form-control"
                 id="password"
                 placeholder="password"
-                required
+                value={formData.password}
+                onChange={(e) =>
+                  setFormData({ ...formData, password: e.target.value })
+                }
                 name="password"
               />
             </div>
-            
+
             <button type="submit" className="btn btn-primary submit m-0-auto">
               Update
             </button>
