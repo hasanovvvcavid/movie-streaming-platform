@@ -14,6 +14,7 @@ import WatchPage from "../pages/WatchPage/WatchPage";
 import SearchPage from "../pages/SearchPage/SearchPage";
 import SearchHistoryPage from "../pages/SearchHistoryPage/SearchHistoryPage";
 import Admin from "../pages/Admin/Admin";
+import Profile from "../pages/Profile/Profile";
 
 function App() {
 
@@ -47,6 +48,7 @@ function App() {
           <Route path='/watch/:id' element={user ? <WatchPage /> : <Navigate to={"/login"} />} />
           <Route path='/search' element={user ? <SearchPage /> : <Navigate to={"/login"} />} />
           <Route path='/history' element={user ? <SearchHistoryPage /> : <Navigate to={"/login"} />} />
+          <Route path='/profile' element={user ? <Profile /> : <Navigate to={"/login"} />} />
           <Route path='/admin' element={user?.admin ? <Admin /> : <Navigate to={"/"} />} />
 
           <Route path="*" element={<Nopage />} />

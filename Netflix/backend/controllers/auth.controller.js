@@ -284,3 +284,39 @@ export const updateUser = async (req, res) => {
     });
   }
 };
+
+export const updateProfile = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updates = req.body;
+    const file = req.file;
+
+    const user = await User.findById(id);
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    const updateData = {
+      username: updates.username || user.username,
+      email: updates.email || user.email,
+    };
+
+    if (updates.password) {
+      const salt = await bcryptjs.genSalt(10);
+      updateData.password = await bcryptjs.hash(updates.password, salt);
+    }
+
+    if (file) {
+      if (user.image) {
+        fs.unlinkSync(path.join("frontend/public/", user.image));
+      }
+      updateData.image = `images/${file.filename}`;
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(id, updateData, {
+      new: true,
+    }).select("-password");
+
+    res.json(updatedUser);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+}

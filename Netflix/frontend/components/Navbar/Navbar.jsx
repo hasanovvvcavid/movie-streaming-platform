@@ -56,11 +56,14 @@ const Navbar = () => {
         <Link to={"/search"}>
           <Search className="size-6 cursor-pointer" />
         </Link>
-        <img
-          src={`./public/${user?.image}`}
-          alt="Avatar"
-          className="h-8 cursor-pointer profile-image"
-        />
+        <Link to={"/profile"}>
+          <img
+            src={`./public/${user?.image}`}
+            alt="Avatar"
+            className="h-8 cursor-pointer profile-image"
+          />
+        </Link>
+
         <LogOut className="size-6 cursor-pointer" onClick={logout} />
         <div className="sm:hidden">
           <Menu className="size-6 cursor-pointer" onClick={toggleMobileMenu} />
