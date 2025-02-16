@@ -1,4 +1,5 @@
 import { User } from "../models/user.model.js";
+import crypto from "crypto";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { generateTokenAndSendCookie } from "../utils/generateToken.js";
@@ -7,6 +8,7 @@ import { sendVerificationEmail } from "../utils/sendEmail.js";
 import { fileURLToPath } from "url";
 import path from "path";
 import fs from "fs";
+import { sendResetEmail } from "../utils/sendResetEmail.js";
 
 export async function signup(req, res) {
   try {
@@ -223,10 +225,10 @@ export const deleteUser = async (req, res) => {
     const user = await User.findByIdAndDelete(id);
 
     if (!user) {
-      return res.status(404).json({ error: 'User not found' });
+      return res.status(404).json({ error: "User not found" });
     }
 
-    res.status(204).json(); 
+    res.status(204).json();
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -241,27 +243,22 @@ export const updateUser = async (req, res) => {
     const updates = req.body;
     const file = req.file;
 
-    
     const user = await User.findById(id);
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
 
-    
     const updateData = {
       username: updates.username || user.username,
       email: updates.email || user.email,
     };
 
-   
     if (updates.password && updates.password.trim() !== "") {
       const salt = await bcryptjs.genSalt(10);
       updateData.password = await bcryptjs.hash(updates.password, salt);
     }
 
-    
     if (file) {
-      
       if (user.image) {
         const oldImagePath = path.join(__dirname, "../../public", user.image);
         await fs.promises.unlink(oldImagePath).catch(console.error);
@@ -269,12 +266,10 @@ export const updateUser = async (req, res) => {
       updateData.image = `images/${file.filename}`;
     }
 
-    
-    const updatedUser = await User.findByIdAndUpdate(
-      id,
-      updateData,
-      { new: true, runValidators: true }
-    ).select("-password");
+    const updatedUser = await User.findByIdAndUpdate(id, updateData, {
+      new: true,
+      runValidators: true,
+    }).select("-password");
 
     res.json(updatedUser);
   } catch (error) {
@@ -319,4 +314,59 @@ export const updateProfile = async (req, res) => {
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
-}
+};
+
+export const resetPassword = async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    if (!user.isVerified) {
+      return res.status(403).json({ error: "Email not verified" });
+    }
+
+    // Reset token oluştur
+    const resetToken = crypto.randomBytes(20).toString("hex");
+    user.resetPasswordToken = resetToken;
+    user.resetPasswordExpires = Date.now() + 3600000;
+    await user.save();
+
+    // Email gönder
+
+    await sendResetEmail(email, resetToken);
+    res.json({ message: "Password reset email sent" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const resetToken = async (req, res) => {
+  const { token } = req.params;
+  const { password } = req.body;
+
+  try {
+    const user = await User.findOne({
+      resetPasswordToken: token,
+      resetPasswordExpires: { $gt: Date.now() }, // Token süresi dolmamışsa
+    });
+
+    if (!user) {
+      return res.status(400).json({ error: "Invalid or expired token" });
+    }
+
+    // Yeni şifreyi hash'le ve kaydet
+    const salt = await bcryptjs.genSalt(10);
+    user.password = await bcryptjs.hash(password, salt);
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+    await user.save();
+
+    res.json({ message: "Password updated successfully" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};

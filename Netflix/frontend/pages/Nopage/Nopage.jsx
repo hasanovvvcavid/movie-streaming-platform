@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router";
-import "./Nopage.css";
+import "./NoPage.css";
 
 const Nopage = () => {
   return (

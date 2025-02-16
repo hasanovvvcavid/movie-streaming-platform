@@ -15,6 +15,8 @@ import SearchPage from "../pages/SearchPage/SearchPage";
 import SearchHistoryPage from "../pages/SearchHistoryPage/SearchHistoryPage";
 import Admin from "../pages/Admin/Admin";
 import Profile from "../pages/Profile/Profile";
+import Reset from "../pages/Reset/Reset";
+import ResetForm from "../pages/Reset/ResetForm";
 
 function App() {
 
@@ -50,6 +52,8 @@ function App() {
           <Route path='/history' element={user ? <SearchHistoryPage /> : <Navigate to={"/login"} />} />
           <Route path='/profile' element={user ? <Profile /> : <Navigate to={"/login"} />} />
           <Route path='/admin' element={user?.admin ? <Admin /> : <Navigate to={"/"} />} />
+          <Route path='/reset-password' element={!user ? <Reset /> : <Navigate to={"/"} />} />
+          <Route path='/reset-password/:token' element={!user ? <ResetForm /> : <Navigate to={"/"} />} />
 
           <Route path="*" element={<Nopage />} />
 

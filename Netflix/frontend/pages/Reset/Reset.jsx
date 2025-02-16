@@ -1,0 +1,67 @@
+import axios from "axios";
+import React, { useState } from "react";
+import toast from "react-hot-toast";
+import { Link, useNavigate } from "react-router-dom";
+
+const Reset = () => {
+  const [email, setEmail] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!/\S+@\S+\.\S+/.test(email)) {
+      toast.error("Invalid email address");
+      return;
+    }
+    setIsLoading(true);
+    try {
+      await axios.post("api/v1/auth/reset-password", email);
+      toast.success("Password reset email sent. Check your inbox.");
+      navigate("/login");
+    } catch (error) {
+      toast.error(error.response?.data?.error || "Failed to send reset email");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  return (
+    <div className="hero-bg">
+      <header className="header">
+        <Link to={"/"}>
+          <img src="/netflix-logo.png" alt="logo" />
+        </Link>
+      </header>
+
+      <div className="form-container">
+        <div className="form-box">
+          <h1>Forgot Password</h1>
+
+          <form onSubmit={handleSubmit}>
+            <div className="input-group">
+              <label htmlFor="email">Email</label>
+              <input
+                type="email"
+                placeholder="you@example.com"
+                id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+
+            <button type="submit">
+              {isLoading ? "Sending..." : "Send Reset Link"}
+            </button>
+          </form>
+
+          <div className="login-link">
+            Don't have any account ? <Link to={"/register"}>Sign Up</Link>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Reset;
