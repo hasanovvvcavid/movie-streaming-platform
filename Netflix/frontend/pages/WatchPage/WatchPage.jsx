@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router";
 import { useContentStore } from "../../store/content";
 import axios from "axios";
-import { get } from "mongoose";
 import Navbar from "../../components/Navbar/Navbar";
 import { ORIGINAL_IMG_BASE_URL, SMALL_IMG_BASE_URL } from "../../src/utils/constants";
 import ReactPlayer from "react-player";
