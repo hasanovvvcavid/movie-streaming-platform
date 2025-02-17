@@ -187,9 +187,10 @@ export const verifyEmail = async (req, res) => {
     user.verificationToken = null;
     await user.save();
 
-    res.status(200).json({ message: "Email verified successfully!" });
+    res.redirect(`${ENV_VARS.CLIENT_LINK}/login?verified=true`);
   } catch (error) {
     res.status(500).json({ error: "Invalid or expired token" });
+    res.redirect(`${ENV_VARS.CLIENT_LINK}/error?message=VerificationFailed`);
   }
 };
 
