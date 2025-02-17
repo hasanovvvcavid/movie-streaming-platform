@@ -20,12 +20,14 @@ const MyTable = () => {
   const [showUnverifiedOnly, setShowUnverifiedOnly] = useState(false);
   const [showAdminOnly, setShowAdminOnly] = useState(false);
   const [sortOrder, setSortOrder] = useState("asc");
+  const [searchTerm, setSearchTerm] = useState("");
 
   const isFiltered =
     showAdminOnly ||
     showVerifiedOnly ||
     showUnverifiedOnly ||
-    sortOrder !== "asc";
+    sortOrder !== "asc" ||
+    searchTerm.trim() !== "";
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
@@ -130,6 +132,11 @@ const MyTable = () => {
     if (showAdminOnly && !user.admin) return false;
     if (showVerifiedOnly && !user.isVerified) return false;
     if (showUnverifiedOnly && user.isVerified) return false;
+    if (
+      searchTerm &&
+      !user.username.toLowerCase().includes(searchTerm.trim().toLowerCase())
+    )
+      return false;
     return true;
   });
 
@@ -147,64 +154,81 @@ const MyTable = () => {
     setShowVerifiedOnly(false);
     setShowUnverifiedOnly(false);
     setSortOrder("asc");
+    setSearchTerm("");
   };
 
   return (
     <div>
       <div className="filter-table-user">
-        {/* <button onClick={() => setSortOrder("asc")} className="btn btn-primary">
+        <div className="filtered-user-basic">
+          {/* <button onClick={() => setSortOrder("asc")} className="btn btn-primary">
           A-Z
         </button> */}
-        <button
-          onClick={() => setSortOrder("desc")}
-          className="btn btn-primary"
-        >
-          Z-A
-        </button>
-        <h4>Admin</h4>
-        <div className="isadmin">
-          <div className="checkbox-wrapper-7">
-            <input
-              checked={showAdminOnly}
-              onChange={() => setShowAdminOnly(!showAdminOnly)}
-              className="tgl tgl-ios"
-              id="cb2-7"
-              type="checkbox"
-            />
-            <label className="tgl-btn" htmlFor="cb2-7"></label>
-          </div>
-        </div>
-        <h4>Verified User : </h4>
-        <div className="isVerified">
-          <div className="checkbox-wrapper-7">
-            <input
-              checked={showVerifiedOnly}
-              onChange={() => setShowVerifiedOnly(!showVerifiedOnly)}
-              className="tgl tgl-ios"
-              id="cb2-8"
-              type="checkbox"
-            />
-            <label className="tgl-btn" htmlFor="cb2-8"></label>
-          </div>
-        </div>
-        <h4>Unverified User : </h4>
-        <div className="unVerified">
-          <div className="checkbox-wrapper-7">
-            <input
-              checked={showUnverifiedOnly}
-              onChange={() => setShowUnverifiedOnly(!showUnverifiedOnly)}
-              className="tgl tgl-ios"
-              id="cb2-9"
-              type="checkbox"
-            />
-            <label className="tgl-btn" htmlFor="cb2-9"></label>
-          </div>
-        </div>
-        {isFiltered && (
-          <button onClick={handleResetFilters} className="btn btn-danger">
-            Cancel
+          <button
+            onClick={() => setSortOrder("desc")}
+            className="btn btn-primary"
+          >
+            Z-A
           </button>
-        )}
+          <h4>Admin :   </h4>
+          <div className="isadmin">
+            <div className="checkbox-wrapper-7">
+              <input
+                checked={showAdminOnly}
+                onChange={() => setShowAdminOnly(!showAdminOnly)}
+                className="tgl tgl-ios"
+                id="cb2-7"
+                type="checkbox"
+              />
+              <label className="tgl-btn" htmlFor="cb2-7"></label>
+            </div>
+          </div>
+          <h4>Verified User : </h4>
+          <div className="isVerified">
+            <div className="checkbox-wrapper-7">
+              <input
+                checked={showVerifiedOnly}
+                onChange={() => setShowVerifiedOnly(!showVerifiedOnly)}
+                className="tgl tgl-ios"
+                id="cb2-8"
+                type="checkbox"
+              />
+              <label className="tgl-btn" htmlFor="cb2-8"></label>
+            </div>
+          </div>
+          <h4>Unverified User : </h4>
+          <div className="unVerified">
+            <div className="checkbox-wrapper-7">
+              <input
+                checked={showUnverifiedOnly}
+                onChange={() => setShowUnverifiedOnly(!showUnverifiedOnly)}
+                className="tgl tgl-ios"
+                id="cb2-9"
+                type="checkbox"
+              />
+              <label className="tgl-btn" htmlFor="cb2-9"></label>
+            </div>
+          </div>
+          {isFiltered && (
+            <button onClick={handleResetFilters} className="btn btn-danger">
+              Cancel
+            </button>
+          )}
+        </div>
+        <div className="search-filter-user">
+          <div className="search-user">
+            <div className="container">
+              <input
+                type="text"
+                placeholder="Search..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              <div className="search"></div>
+            </div>
+          </div>
+          
+        </div>
       </div>
       <div className="admin-container-table">
         <BootstrapTable striped bordered hover>

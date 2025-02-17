@@ -74,7 +74,7 @@ const Profile = () => {
     }
   };
   return (
-    <div className="hero-bg">
+    <div className="hero-bg-2">
       <Navbar />
       <div className="profile-container">
         <div className="profile-image-big">

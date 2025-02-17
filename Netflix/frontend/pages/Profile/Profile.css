@@ -17,3 +17,23 @@
         }
     }
 }
+
+@media screen and (max-width: 768px){
+    .profile-container{
+        flex-direction: column;
+        gap: 20px;
+        .profile-image-big{
+            width: 200px;
+            height: 200px;
+        }
+    }
+    .hero-bg-2 {
+        height: 120vh;
+    }
+
+    .profile-image-big{
+        width: 300px !important;
+        height: 300px !important;
+    }
+    
+}

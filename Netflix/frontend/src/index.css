@@ -3,6 +3,13 @@
 .hero-bg {
 	background-image: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.1)), url("/hero.png");
 }
+.hero-bg-2{
+	background-image: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.1)), url("/hero.png");
+	background-attachment: fixed;
+	background-size: cover;
+	height: 100vh;
+	color: white;
+}
 
 .shimmer {
 	animation: shimmer 2s infinite linear;
