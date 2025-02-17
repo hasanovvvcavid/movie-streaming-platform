@@ -64,7 +64,7 @@ const Navbar = () => {
           />
         </Link>
 
-        <LogOut className="size-6 cursor-pointer" onClick={logout} />
+        <LogOut className="size-6 text-white cursor-pointer" onClick={logout} />
         <div className="sm:hidden">
           <Menu className="size-6 cursor-pointer" onClick={toggleMobileMenu} />
         </div>

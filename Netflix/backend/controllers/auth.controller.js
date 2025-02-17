@@ -44,7 +44,7 @@ export async function signup(req, res) {
     const salt = await bcryptjs.genSalt(10);
     const hashedPassword = await bcryptjs.hash(password, salt);
 
-    //Nodem mailer
+    //Nodemmailer
     const verificationToken = jwt.sign({ email }, ENV_VARS.JWT_SECRET, {
       expiresIn: "1h",
     });
@@ -260,8 +260,7 @@ export const updateUser = async (req, res) => {
 
     if (file) {
       if (user.image) {
-        const oldImagePath = path.join(__dirname, "../../public", user.image);
-        await fs.promises.unlink(oldImagePath).catch(console.error);
+        fs.unlinkSync(path.join("../frontend/public/", user.image));
       }
       updateData.image = `images/${file.filename}`;
     }
@@ -301,7 +300,7 @@ export const updateProfile = async (req, res) => {
 
     if (file) {
       if (user.image) {
-        fs.unlinkSync(path.join("frontend/public/", user.image));
+        fs.unlinkSync(path.join("../frontend/public/", user.image));
       }
       updateData.image = `images/${file.filename}`;
     }
