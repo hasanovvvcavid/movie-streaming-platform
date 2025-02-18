@@ -26,5 +26,7 @@ const userSchema = new mongoose.Schema({
   isVerified: { type: Boolean, default: false },
   admin: { type: Boolean, default: false },
   isCreated: { type: Date, default: Date.now },
+  resetPasswordToken: String,
+  resetPasswordExpires: Date
 });
 export const User = mongoose.model("User", userSchema);

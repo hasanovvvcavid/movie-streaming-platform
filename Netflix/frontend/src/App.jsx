@@ -53,7 +53,7 @@ function App() {
           <Route path='/profile' element={user ? <Profile /> : <Navigate to={"/login"} />} />
           <Route path='/admin' element={user?.admin ? <Admin /> : <Navigate to={"/"} />} />
           <Route path='/reset-password' element={!user ? <Reset /> : <Navigate to={"/"} />} />
-          <Route path='/reset-password/:token' element={!user ? <ResetForm /> : <Navigate to={"/"} />} />
+          <Route path='/reset-password/:token' element= {<ResetForm />} />
 
           <Route path="*" element={<Nopage />} />
 

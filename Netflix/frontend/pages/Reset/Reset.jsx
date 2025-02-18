@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const Reset = () => {
   const [email, setEmail] = useState("");
@@ -11,16 +12,28 @@ const Reset = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!/\S+@\S+\.\S+/.test(email)) {
-      toast.error("Invalid email address");
+      Swal.fire({
+        icon: "error",
+        title: "Invalid Email",
+        text: "Please enter a valid email address",
+      });
       return;
     }
     setIsLoading(true);
     try {
-      await axios.post("api/v1/auth/reset-password", email);
-      toast.success("Password reset email sent. Check your inbox.");
-      navigate("/login");
+      await axios.post("api/v1/auth/reset-password", { email });
+      Swal.fire({
+        icon: "success",
+        title: "Email Sent!",
+        text: "Password reset email has been sent. Check your inbox.",
+        confirmButtonText: "OK",
+      }).then(() => navigate("/login"));
     } catch (error) {
-      toast.error(error.response?.data?.error || "Failed to send reset email");
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: error.response?.data?.error || "Failed to send reset email",
+      });
     } finally {
       setIsLoading(false);
     }

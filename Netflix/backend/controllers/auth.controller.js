@@ -332,7 +332,7 @@ export const resetPassword = async (req, res) => {
     // Reset token oluştur
     const resetToken = crypto.randomBytes(20).toString("hex");
     user.resetPasswordToken = resetToken;
-    user.resetPasswordExpires = Date.now() + 3600000;
+    user.resetPasswordExpires = new Date(Date.now() + 3600000);
     await user.save();
 
     // Email gönder
@@ -365,7 +365,7 @@ export const resetToken = async (req, res) => {
     user.resetPasswordExpires = undefined;
     await user.save();
 
-    res.json({ message: "Password updated successfully" });
+    res.redirect(`${ENV_VARS.CLIENT_LINK}/reset-form?reset=succes`);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
