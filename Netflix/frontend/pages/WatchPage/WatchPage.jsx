@@ -8,6 +8,9 @@ import ReactPlayer from "react-player";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { formatReleaseDate } from "../../src/utils/dateConverter";
 import WatchPageSkeleton from "../../components/skeletons/WatchPageSkeleton";
+import "./WatchPage.css";
+import { useAuthStore } from "../../store/authUser";
+import Swal from "sweetalert2";
 
 const WatchPage = () => {
   const { id } = useParams();
@@ -17,6 +20,20 @@ const WatchPage = () => {
   const [content, setContent] = useState({});
   const [similarContent, setSimilarContent] = useState([]);
   const { contentType } = useContentStore();
+
+  const user = useAuthStore((state) => state.user);
+
+  const [comments, setComments] = useState([]);
+  const [newComment, setNewComment] = useState("");
+  const [currentRating, setCurrentRating] = useState(0);
+  const [hoverRating, setHoverRating] = useState(0);
+  const [editingComment, setEditingComment] = useState(null);
+  const [editedText, setEditedText] = useState("");
+  const [editedRating, setEditedRating] = useState(0);
+  const [initialText, setInitialText] = useState("");
+  const [initialRating, setInitialRating] = useState(0);
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const sliderRef = useRef(null);
 
@@ -89,6 +106,183 @@ const WatchPage = () => {
         behavior: "smooth",
       });
   };
+
+  //movie comment
+
+  const handleRatingChange = (rating) => {
+    setCurrentRating(rating);
+  };
+
+  console.log(currentRating);
+
+  const handleCommentSubmit = async () => {
+    if (!newComment.trim() || currentRating === 0) return;
+
+    setIsLoading(true);
+
+    const newCommentObject = {
+      userId: {
+        username: user?.username, // Varsayılan kullanıcı adı
+        image: user?.image || "/user-avatar.jpg", // Varsayılan avatar
+        id: user?._id, // Kullanıcı ID'si
+      },
+      text: newComment,
+      rating: currentRating,
+      createdAt: new Date().toISOString(),
+    };
+
+    try {
+      // API'ye gönderim işlemi
+      const response = await fetch(`/api/v1/comments/${id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({
+          movieId: id,
+          text: newComment,
+          createdAt: new Date().toISOString(),
+          rating: currentRating,
+          userId: user?._id,
+          user: {
+            username: user?.username,
+            image: user?.image || "/user-avatar.jpg",
+          },
+        }),
+      });
+
+      console.log(newCommentObject);
+
+      if (response.ok) {
+        setComments([...comments, newCommentObject]);
+        setNewComment("");
+        setCurrentRating(0);
+      }
+
+      console.log(newCommentObject);
+    } catch (error) {
+      console.error("Error submitting comment:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const fetchComments = async () => {
+    try {
+      const response = await fetch(`/api/v1/comments/${id}`, {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch comments");
+      }
+      const data = await response.json();
+      setComments(data);
+    } catch (error) {
+      console.error("Error fetching comments:", error);
+    }
+  };
+
+  // Sayfa yüklendiğinde yorumları çek
+  useEffect(() => {
+    fetchComments();
+  }, [id]);
+
+  const handleDeleteComment = async (commentId) => {
+    setIsLoading(true);
+
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "No, cancel",
+    });
+
+    if (!result.isConfirmed) return;
+    try {
+      const response = await fetch(`/api/v1/comments/delete/${commentId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({
+          userId: user?._id,
+          isAdmin: user?.isAdmin, // Admin yetkisi kontrolü
+        }),
+      });
+
+      if (response.ok) {
+        fetchComments(); // Güncellenmiş listeyi getir
+        Swal.fire({
+          title: "Deleted!",
+          text: "Your comment has been successfully deleted.",
+          icon: "success",
+          timer: 2000,
+          showConfirmButton: false,
+        });
+      }
+    } catch (error) {
+      console.error("Error deleting comment:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleUpdateComment = async (commentId) => {
+    if (!editedText.trim() || editedRating === 0) return;
+
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to save the changes?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, save it!",
+      cancelButtonText: "No, cancel",
+    });
+
+    if (!result.isConfirmed) return;
+
+    setIsLoading(true);
+    try {
+      const response = await fetch(`/api/v1/comments/update/${commentId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({
+          text: editedText,
+          rating: editedRating,
+          userId: user?._id,
+        }),
+      });
+
+      if (response.ok) {
+        setEditingComment(null); // Düzenleme modunu kapat
+        fetchComments(); // Güncellenmiş yorumları getir
+        Swal.fire({
+          title: "Success!",
+          text: "Your comment has been updated.",
+          icon: "success",
+          timer: 2000,
+          showConfirmButton: false,
+        });
+      }
+    } catch (error) {
+      console.error("Error updating comment:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
 
   if (loading)
     return (
@@ -197,6 +391,175 @@ const WatchPage = () => {
             alt="Poster image"
             className="max-h-[600px] rounded-md"
           />
+        </div>
+
+        <div className="movie-comment">
+          <div className="comment">
+            <h3 id="movie-title">Comment ({comments.length})</h3>
+          </div>
+
+          <div className="previous-comments">
+            {[...comments]
+              .sort((a, b) => {
+                // Eğer yorumun sahibi şu anki kullanıcıysa, onu en üste koy
+                if (a.userId?.id === user?._id) return -1;
+                if (b.userId?.id === user?._id) return 1;
+                return 0;
+              })
+              .map((comment, index) => (
+                <div className="previous-box" key={comment._id || index}>
+                  <div className="comment-profile">
+                    <img src={`../public/${comment.userId?.image}`} alt="" />
+                    {comment.userId?.username || "Anonymous"}
+                  </div>
+                  <div className="comment-rating">
+                    <h4>{new Date(comment?.createdAt).toLocaleString()}</h4>
+                    <div className="comment-star">
+                      {[...Array(5)].map((_, i) => (
+                        <i
+                          key={i}
+                          className="fa-solid fa-star"
+                          style={{
+                            color:
+                              i < (comment?.rating || 0)
+                                ? "#FFD700"
+                                : "rgba(255, 215, 0, 0.3)",
+                          }}
+                        ></i>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="comment-ds">
+                    <p>{comment?.text}</p>
+                    <div className="comment-action">
+                      {(user?.isAdmin ||
+                        comment.userId?.username === user?.username) && (
+                        <>
+                          <button
+                            onClick={() => {
+                              setEditingComment(comment._id);
+                              setEditedText(comment.text);
+                              setEditedRating(comment.rating);
+                              setInitialText(comment.text);
+                              setInitialRating(comment.rating);
+                            }}
+                            id="update-button"
+                          >
+                            Update
+                          </button>
+                          <button
+                            onClick={() => handleDeleteComment(comment._id)}
+                            id="delete-button"
+                          >
+                            Delete
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+          </div>
+
+          <div className="previous-comments">
+            {!comments.length && (
+              <h2>No comments yet. Be the first to comment!</h2>
+            )}
+          </div>
+
+          <div className="comment-form">
+            <textarea
+              name=""
+              id=""
+              placeholder="Write a comment"
+              value={editingComment ? editedText : newComment} // Eğer düzenleme yapılıyorsa editedText, değilse newComment kullan
+              onChange={(e) =>
+                editingComment
+                  ? setEditedText(e.target.value)
+                  : setNewComment(e.target.value)
+              }
+            ></textarea>
+            <div className="rating-section">
+              <h4>Rate this movie:</h4>
+              <div className="star-input">
+                {[...Array(5)].map((_, i) => {
+                  const ratingValue = editingComment
+                    ? editedRating
+                    : currentRating;
+                  const displayRating = hoverRating || ratingValue;
+
+                  return (
+                    <i
+                      key={i}
+                      className="fa-solid fa-star"
+                      style={{
+                        color:
+                          i < displayRating
+                            ? "#FFD700"
+                            : "rgba(255, 215, 0, 0.3)",
+                        transition: "color 0.2s ease-in-out",
+                        cursor: "pointer",
+                      }}
+                      onMouseEnter={() => setHoverRating(i + 1)} // Hover olunca geçici olarak değiştir
+                      onMouseLeave={() => setHoverRating(0)} // Hover bitince eski haline dön
+                      onClick={() =>
+                        editingComment
+                          ? setEditedRating(i + 1)
+                          : setCurrentRating(i + 1)
+                      } // Tıklandığında kalıcı olarak değiştir
+                    ></i>
+                  );
+                })}
+              </div>
+            </div>
+            {editingComment ? (
+              <>
+                <button
+                  onClick={() => handleUpdateComment(editingComment)}
+                  disabled={
+                    isLoading ||
+                    (editedText === initialText &&
+                      editedRating === initialRating)
+                  }
+                  style={{
+                    backgroundColor:
+                      isLoading ||
+                      (editedText === initialText &&
+                        editedRating === initialRating)
+                        ? "rgba(255, 215, 0, 0.3)" // Soluk renk
+                        : "#007bff", // Normal aktif renk
+                    color:
+                      isLoading ||
+                      (editedText === initialText &&
+                        editedRating === initialRating)
+                        ? "#666" // Yazı rengini de soluk yap
+                        : "#fff",
+                    cursor:
+                      isLoading ||
+                      (editedText === initialText &&
+                        editedRating === initialRating)
+                        ? "not-allowed" // Kullanıcı tıklayamaz
+                        : "pointer",
+                    transition: "background-color 0.3s ease",
+                  }}
+                >
+                  {isLoading ? "Saving..." : "Save"}
+                </button>
+
+                <button
+                  onClick={() => setEditingComment(null)}
+                  disabled={isLoading}
+                  style={{ backgroundColor: "rgb(143, 10, 10)", color: "#fff" }}
+                >
+                  Cancel
+                </button>
+              </>
+            ) : (
+              <button onClick={handleCommentSubmit} disabled={isLoading}>
+                {isLoading ? "Sending..." : "Send"}
+              </button>
+            )}
+          </div>
         </div>
 
         {similarContent.length > 0 && (
