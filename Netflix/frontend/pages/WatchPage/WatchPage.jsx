@@ -3,7 +3,10 @@ import { Link, useParams } from "react-router";
 import { useContentStore } from "../../store/content";
 import axios from "axios";
 import Navbar from "../../components/Navbar/Navbar";
-import { ORIGINAL_IMG_BASE_URL, SMALL_IMG_BASE_URL } from "../../src/utils/constants";
+import {
+  ORIGINAL_IMG_BASE_URL,
+  SMALL_IMG_BASE_URL,
+} from "../../src/utils/constants";
 import ReactPlayer from "react-player";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { formatReleaseDate } from "../../src/utils/dateConverter";
@@ -283,7 +286,6 @@ const WatchPage = () => {
     }
   };
 
-
   if (loading)
     return (
       <div className="min-h-screen bg-black p-10">
@@ -401,9 +403,8 @@ const WatchPage = () => {
           <div className="previous-comments">
             {[...comments]
               .sort((a, b) => {
-                // Eğer yorumun sahibi şu anki kullanıcıysa, onu en üste koy
-                if (a.userId?.id === user?._id) return -1;
-                if (b.userId?.id === user?._id) return 1;
+                if (a.userId?.username === user?.username) return -1;
+                if (b.userId?.username === user?.username) return 1;
                 return 0;
               })
               .map((comment, index) => (
