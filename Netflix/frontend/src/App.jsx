@@ -17,6 +17,8 @@ import Admin from "../pages/Admin/Admin";
 import Profile from "../pages/Profile/Profile";
 import Reset from "../pages/Reset/Reset";
 import ResetForm from "../pages/Reset/ResetForm";
+import Favorites from "../pages/Favorites/Favorites";
+import WatchLater from "../pages/WatchLater/WatchLater";
 
 function App() {
 
@@ -51,6 +53,8 @@ function App() {
           <Route path='/search' element={user ? <SearchPage /> : <Navigate to={"/login"} />} />
           <Route path='/history' element={user ? <SearchHistoryPage /> : <Navigate to={"/login"} />} />
           <Route path='/profile' element={user ? <Profile /> : <Navigate to={"/login"} />} />
+          <Route path='/favorites' element={user ? <Favorites /> : <Navigate to={"/login"} />} />
+          <Route path='/watch-later' element={user ? <WatchLater /> : <Navigate to={"/login"} />} />
           <Route path='/admin' element={user?.admin ? <Admin /> : <Navigate to={"/"} />} />
           <Route path='/reset-password' element={!user ? <Reset /> : <Navigate to={"/"} />} />
           <Route path='/reset-password/:token' element= {<ResetForm />} />

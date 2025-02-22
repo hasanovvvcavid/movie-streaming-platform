@@ -18,7 +18,7 @@ export const useAuthStore = create((set) => ({
       });
       return response.data;
     } catch (error) {
-      console.error("Signup Error Details:", error.response?.data); // 🔴 Hata detayını görün
+      console.error("Signup Error Details:", error.response?.data); 
       const errorMessage = error.response?.data?.message || "Signup failed!";
       toast.error(errorMessage);
       set({ isSigningUp: false, user: null });

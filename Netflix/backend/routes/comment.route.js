@@ -1,6 +1,10 @@
-import express from 'express';
-import { addMovieComment, deleteMovieComment, getMovieComments, updateMovieComment } from '../controllers/comment.controller.js';
-
+import express from "express";
+import {
+  addMovieComment,
+  deleteMovieComment,
+  getMovieComments,
+  updateMovieComment,
+} from "../controllers/comment.controller.js";
 
 const router = express.Router();
 

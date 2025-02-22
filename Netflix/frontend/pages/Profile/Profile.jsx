@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from "react";
 import "./Profile.css";
-import { Link, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import axios from "axios";
-import { toast } from "react-hot-toast";
 import Navbar from "../../components/Navbar/Navbar";
 import { useAuthStore } from "../../store/authUser";
 import Swal from "sweetalert2";
 
 const Profile = () => {
-  const { user, setUser } = useAuthStore(); 
+  const { user, setUser } = useAuthStore();
   const [formData, setFormData] = useState({
     username: user?.username || "",
     email: user?.email || "",
@@ -31,17 +30,17 @@ const Profile = () => {
     e.preventDefault();
 
     const confirmation = await Swal.fire({
-        title: "Are you sure?",
-        text: "Are you sure you want to update your profile?",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Yes, update!",
-        cancelButtonText: "No, cancel",
-      });
+      title: "Are you sure?",
+      text: "Are you sure you want to update your profile?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, update!",
+      cancelButtonText: "No, cancel",
+    });
 
-  if (!confirmation.isConfirmed) {
-    return; // Kullanıcı iptal ederse işlemi durdur
-  }
+    if (!confirmation.isConfirmed) {
+      return;
+    }
 
     try {
       const formPayload = new FormData();
@@ -70,7 +69,11 @@ const Profile = () => {
       Swal.fire("Success", "Profile update successfully", "success");
     } catch (error) {
       console.error("Update error:", error);
-      Swal.fire("Error!", error.response?.data?.error || "Update failed", "error");
+      Swal.fire(
+        "Error!",
+        error.response?.data?.error || "Update failed",
+        "error"
+      );
     }
   };
   return (
@@ -88,8 +91,13 @@ const Profile = () => {
             <form onSubmit={handleSubmit}>
               <div className="input-group">
                 <label htmlFor="image">Image</label>
-                <input type="file" placeholder="" id="image" accept="image/*"
-            onChange={handleFileChange} />
+                <input
+                  type="file"
+                  placeholder=""
+                  id="image"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                />
               </div>
               <div className="input-group">
                 <label htmlFor="email">Email</label>
@@ -104,19 +112,29 @@ const Profile = () => {
 
               <div className="input-group">
                 <label htmlFor="username">Username</label>
-                <input type="text" placeholder="johndoe" id="username" value={formData.username}
-            onChange={(e) =>
-              setFormData({ ...formData, username: e.target.value })
-            }
-            required />
+                <input
+                  type="text"
+                  placeholder="johndoe"
+                  id="username"
+                  value={formData.username}
+                  onChange={(e) =>
+                    setFormData({ ...formData, username: e.target.value })
+                  }
+                  required
+                />
               </div>
 
               <div className="input-group">
                 <label htmlFor="password">Password</label>
-                <input type="password" placeholder="••••••••" id="password"  value={formData.password}
-            onChange={(e) =>
-              setFormData({ ...formData, password: e.target.value })
-            } />
+                <input
+                  type="password"
+                  placeholder="••••••••"
+                  id="password"
+                  value={formData.password}
+                  onChange={(e) =>
+                    setFormData({ ...formData, password: e.target.value })
+                  }
+                />
               </div>
 
               <button type="submit">

@@ -14,6 +14,7 @@ import WatchPageSkeleton from "../../components/skeletons/WatchPageSkeleton";
 import "./WatchPage.css";
 import { useAuthStore } from "../../store/authUser";
 import Swal from "sweetalert2";
+import toast from "react-hot-toast";
 
 const WatchPage = () => {
   const { id } = useParams();
@@ -22,8 +23,13 @@ const WatchPage = () => {
   const [loading, setLoading] = useState(true);
   const [content, setContent] = useState({});
   const [similarContent, setSimilarContent] = useState([]);
+  const [favorites, setFavorites] = useState([]);
+  const [haveFavorites, setHaveFavorites] = useState(false);
   const { contentType } = useContentStore();
+  const [later, setLater] = useState([]);
+  const [haveLater, setHaveLater] = useState(false);
 
+  const userId = useAuthStore((state) => state.user?._id);
   const user = useAuthStore((state) => state.user);
 
   const [comments, setComments] = useState([]);
@@ -116,8 +122,6 @@ const WatchPage = () => {
     setCurrentRating(rating);
   };
 
-  console.log(currentRating);
-
   const handleCommentSubmit = async () => {
     if (!newComment.trim() || currentRating === 0) return;
 
@@ -135,7 +139,6 @@ const WatchPage = () => {
     };
 
     try {
-      // API'ye gönderim işlemi
       const response = await fetch(`/api/v1/comments/${id}`, {
         method: "POST",
         headers: {
@@ -155,15 +158,11 @@ const WatchPage = () => {
         }),
       });
 
-      console.log(newCommentObject);
-
       if (response.ok) {
         setComments([...comments, newCommentObject]);
         setNewComment("");
         setCurrentRating(0);
       }
-
-      console.log(newCommentObject);
     } catch (error) {
       console.error("Error submitting comment:", error);
     } finally {
@@ -191,7 +190,6 @@ const WatchPage = () => {
     }
   };
 
-  // Sayfa yüklendiğinde yorumları çek
   useEffect(() => {
     fetchComments();
   }, [id]);
@@ -283,6 +281,146 @@ const WatchPage = () => {
       console.error("Error updating comment:", error);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+
+  useEffect(() => {
+    const fetchFavorites = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:3000/api/v1/auth/${userId}/favorites`
+        );
+
+        if (response.status === 200) {
+          const data = await response.json();
+
+          setFavorites(data);
+        } else {
+          console.error("Favoriler alınamadı");
+        }
+      } catch (error) {
+        console.error("Favoriler alınırken hata:", error);
+      }
+    };
+
+    if (userId) {
+      fetchFavorites();
+    }
+  }, [userId, content.id]);
+
+  useEffect(() => {
+
+    const isMovieInFavorites = !!favorites?.find(
+      (fav) => fav.movieId == content.id
+    );
+
+    setHaveFavorites(isMovieInFavorites);
+  }, [favorites]);
+
+  const handleFavorite = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:3000/api/v1/auth/favorites/toggle/${userId}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            movieId: content.id,
+            title: content.title,
+            poster: content.poster_path,
+          }),
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        setFavorites(data?.favorites);
+
+        if (haveFavorites) {
+          toast.error("Removed from Favorites! ❌");
+        } else {
+          toast.success("Added to Favorites! ✅");
+        }
+      } else {
+        console.error("Favori işlemi başarısız oldu");
+      }
+    } catch (error) {
+      console.error("Favori işlemi sırasında hata:", error);
+    }
+  };
+
+  //Watch later
+  const fetchLater = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:3000/api/v1/auth/${userId}/later`
+      );
+
+      if (response.status === 200) {
+        const data = await response.json();
+console.log(data);
+
+        setLater(data);
+      } else {
+        console.error("Later not found");
+      }
+    } catch (error) {
+      console.error("getLater has problem", error);
+    }
+  };
+
+  useEffect(() => {
+    if (userId) {
+      fetchLater();
+    }
+  }, [userId, content.id ]);
+
+
+  useEffect(() => {
+    console.log("l", later);
+
+    const isMovieInLater = !!later?.find(
+      (later) => later.movieId == content.id
+    );
+console.log(isMovieInLater);
+
+    setHaveLater(isMovieInLater);
+  }, [later]);
+  // console.log(haveLater);
+
+  const handleLater = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:3000/api/v1/auth/later/toggle/${userId}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            movieId: content.id,
+            title: content.title,
+            poster: content.poster_path,
+          }),
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+        
+        setLater(data?.watchLater);
+
+        if (haveLater) {
+          toast.error("Removed from Watch later list! ❌");
+        } else {
+          toast.success("Added to Watch later list! ✅");
+        }
+
+      } else {
+        console.error("Later operation failed");
+      }
+    } catch (error) {
+      console.error("Later operation failed", error);
     }
   };
 
@@ -387,6 +525,48 @@ const WatchPage = () => {
               )}{" "}
             </p>
             <p className="mt-4 text-lg">{content?.overview}</p>
+            <div className="add-button-fl flex items-center gap-4 mt-4">
+              <button
+                id="addToFavorites"
+                onClick={handleFavorite}
+                disabled={loading}
+                style={{
+                  backgroundColor: haveFavorites ? "#681111" : "#681111",
+                  color: "white",
+                  padding: "10px 15px",
+                  border: "none",
+                  borderRadius: "5px",
+                  cursor: loading ? "not-allowed" : "pointer",
+                  transition: "0.3s",
+                }}
+              >
+                {isLoading
+                  ? "loading..."
+                  : haveFavorites
+                    ? "❌ Remove from Favorites"
+                    : "❤️ Add to Favorites"}
+              </button>
+              <button
+                id="addToLater"
+                onClick={handleLater}
+                disabled={loading}
+                style={{
+                  backgroundColor: haveLater ? "#681111" : "#681111",
+                  color: "white",
+                  padding: "10px 15px",
+                  border: "none",
+                  borderRadius: "5px",
+                  cursor: loading ? "not-allowed" : "pointer",
+                  transition: "0.3s",
+                }}
+              >
+                {isLoading
+                  ? "loading..."
+                  : haveLater
+                    ? "❌ Remove from watch later"
+                    : "🕒 Add to watch later"}
+              </button>
+            </div>
           </div>
           <img
             src={ORIGINAL_IMG_BASE_URL + content?.poster_path}
@@ -433,7 +613,7 @@ const WatchPage = () => {
                   <div className="comment-ds">
                     <p>{comment?.text}</p>
                     <div className="comment-action">
-                      {(user?.isAdmin ||
+                      {(
                         comment.userId?.username === user?.username) && (
                         <>
                           <button
@@ -448,6 +628,12 @@ const WatchPage = () => {
                           >
                             Update
                           </button>
+                        </>
+                      )}
+
+                      {(user?.admin ||
+                        comment.userId?.username === user?.username) && (
+                        <>
                           <button
                             onClick={() => handleDeleteComment(comment._id)}
                             id="delete-button"
@@ -473,7 +659,7 @@ const WatchPage = () => {
               name=""
               id=""
               placeholder="Write a comment"
-              value={editingComment ? editedText : newComment} // Eğer düzenleme yapılıyorsa editedText, değilse newComment kullan
+              value={editingComment ? editedText : newComment} 
               onChange={(e) =>
                 editingComment
                   ? setEditedText(e.target.value)
@@ -501,13 +687,13 @@ const WatchPage = () => {
                         transition: "color 0.2s ease-in-out",
                         cursor: "pointer",
                       }}
-                      onMouseEnter={() => setHoverRating(i + 1)} // Hover olunca geçici olarak değiştir
-                      onMouseLeave={() => setHoverRating(0)} // Hover bitince eski haline dön
+                      onMouseEnter={() => setHoverRating(i + 1)} 
+                      onMouseLeave={() => setHoverRating(0)} 
                       onClick={() =>
                         editingComment
                           ? setEditedRating(i + 1)
                           : setCurrentRating(i + 1)
-                      } // Tıklandığında kalıcı olarak değiştir
+                      } 
                     ></i>
                   );
                 })}
@@ -527,19 +713,19 @@ const WatchPage = () => {
                       isLoading ||
                       (editedText === initialText &&
                         editedRating === initialRating)
-                        ? "rgba(255, 215, 0, 0.3)" // Soluk renk
-                        : "#007bff", // Normal aktif renk
+                        ? "rgba(255, 215, 0, 0.3)" 
+                        : "#007bff", 
                     color:
                       isLoading ||
                       (editedText === initialText &&
                         editedRating === initialRating)
-                        ? "#666" // Yazı rengini de soluk yap
+                        ? "#666" 
                         : "#fff",
                     cursor:
                       isLoading ||
                       (editedText === initialText &&
                         editedRating === initialRating)
-                        ? "not-allowed" // Kullanıcı tıklayamaz
+                        ? "not-allowed" 
                         : "pointer",
                     transition: "background-color 0.3s ease",
                   }}

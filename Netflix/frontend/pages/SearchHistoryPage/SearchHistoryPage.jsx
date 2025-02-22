@@ -1,6 +1,5 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { use } from "react";
 import Navbar from "../../components/Navbar/Navbar";
 import { Trash } from "lucide-react";
 import { SMALL_IMG_BASE_URL } from "../../src/utils/constants";
@@ -56,6 +55,9 @@ const SearchHistoryPage = () => {
     }
 };
 
+console.log(searchHistory);
+
+
 if (searchHistory?.length === 0) {
     return (
         <div className='bg-black min-h-screen text-white'>
@@ -106,7 +108,7 @@ if (searchHistory?.length === 0) {
                 {entry.searchType[0].toUpperCase() + entry.searchType.slice(1)}
               </span>
               <Trash
-                className="size-5 ml-4 cursor-pointer hover:fill-red-600 hover:text-red-600"
+                className="size-7 ml-4 cursor-pointer hover:fill-red-600 hover:text-red-600"
                 onClick={() => handleDelete(entry)}
               />
             </div>

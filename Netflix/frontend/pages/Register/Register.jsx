@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import "./Register.css";
-import { Link, Navigate, useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { useAuthStore } from "../../store/authUser";
 import toast from "react-hot-toast";
 
@@ -19,19 +19,18 @@ const Register = () => {
   const handleSignUp = async (e) => {
     e.preventDefault();
 
-    // FormData oluştur
     const formData = new FormData();
     formData.append("email", email);
     formData.append("username", username);
     formData.append("password", password);
-    formData.append("file", image)
+    formData.append("file", image);
 
     try {
-      await signup(formData); // ✅ FormData'yı gönder
+      await signup(formData);
       toast.success("Please verify your email to login");
       navigate("/login");
     } catch (error) {
-      // Hata zaten authStore'da gösteriliyor
+      toast.error(error.message);
     }
   };
 
@@ -48,7 +47,7 @@ const Register = () => {
           <h1>Sign Up</h1>
 
           <form onSubmit={handleSignUp}>
-          <div className="input-group">
+            <div className="input-group">
               <label htmlFor="image">Image</label>
               <input
                 type="file"
@@ -57,7 +56,7 @@ const Register = () => {
                 // value={image}
                 accept="image/*"
                 onChange={(e) => setImage(e.target.files[0])}
-                
+
                 // onChange={(e) => setEmail(e.target.value)}
               />
             </div>

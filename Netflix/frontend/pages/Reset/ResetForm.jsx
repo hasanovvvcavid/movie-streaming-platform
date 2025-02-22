@@ -1,6 +1,5 @@
 import axios from "axios";
 import React, { useState } from "react";
-import toast from "react-hot-toast";
 import { Link, useNavigate, useParams } from "react-router";
 import Swal from "sweetalert2";
 
@@ -67,7 +66,9 @@ const ResetForm = () => {
               />
             </div>
 
-            <button type="submit" disabled={isLoading}>{isLoading ? "Updating..." : "Reset Password"}</button>
+            <button type="submit" disabled={isLoading}>
+              {isLoading ? "Updating..." : "Reset Password"}
+            </button>
           </form>
         </div>
       </div>

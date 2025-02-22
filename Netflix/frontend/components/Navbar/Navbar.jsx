@@ -2,7 +2,7 @@ import React from "react";
 import { useState } from "react";
 import { Link } from "react-router";
 import { useAuthStore } from "../../store/authUser";
-import { LogOut, Menu, Search } from "lucide-react";
+import { Clock, Heart, LogOut, Menu, Search, Watch } from "lucide-react";
 import { useContentStore } from "../../store/content";
 import "./Navbar.css";
 
@@ -46,7 +46,7 @@ const Navbar = () => {
 
           {user?.admin && (
             <Link to="/admin" className="hover:underline">
-              Admin Panel
+              Admin
             </Link>
           )}
         </div>
@@ -55,6 +55,12 @@ const Navbar = () => {
       <div className="flex gap-2 items-center z-50">
         <Link to={"/search"}>
           <Search className="size-6 cursor-pointer" />
+        </Link>
+        <Link to={"/favorites"}>
+          <Heart className="size-6 cursor-pointer" />
+        </Link>
+        <Link to={"/watch-later"}>
+          <Clock className="size-6 cursor-pointer" />
         </Link>
         <Link to={"/profile"}>
           <img
@@ -96,6 +102,11 @@ const Navbar = () => {
           >
             Search History
           </Link>
+          {user?.admin && (
+            <Link to="/admin" className="block hover:underline p-2">
+              Admin
+            </Link>
+          )}
         </div>
       )}
     </header>

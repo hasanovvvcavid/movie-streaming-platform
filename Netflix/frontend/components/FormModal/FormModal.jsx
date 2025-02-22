@@ -6,7 +6,6 @@ import { useEffect } from "react";
 import { useState } from "react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
-import { formatReleaseDateToSec } from "../../src/utils/dateConverterToSec";
 
 const style = {
   position: "absolute",
@@ -81,8 +80,8 @@ export default function BasicModal({ open, selectedUser, onClose, onUpdate }) {
   return (
     <div>
       <Modal
-        open={open} 
-        onClose={onClose} 
+        open={open}
+        onClose={onClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >

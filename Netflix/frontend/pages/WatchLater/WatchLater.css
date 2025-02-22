@@ -1,0 +1,14 @@
+.favorites-container {
+    width: 75%;
+    margin: 0 auto;
+  }
+  .title-trash{
+    width: 100%;
+    justify-content: space-between;
+  }
+  .fav-img{
+    object-fit: contain;
+  }
+  .fav-trash{
+    transition: 0.2s;
+  }

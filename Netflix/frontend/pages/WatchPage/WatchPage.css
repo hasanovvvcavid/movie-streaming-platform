@@ -13,6 +13,8 @@
     }
   
     .previous-comments {
+      max-height: 800px;
+      overflow: auto;
   
       .previous-box {
         border: 1px solid white;
@@ -134,3 +136,13 @@
     }
   }
   
+
+  #addToFavorites{
+    background-color: #681111;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 15px;
+    cursor: pointer;
+    margin: 8px 0;
+  }

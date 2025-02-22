@@ -23,10 +23,24 @@ const userSchema = new mongoose.Schema({
     type: Array,
     default: [],
   },
+  favorites: [
+    {
+      movieId: String,
+      title: String,
+      poster: String,
+    },
+  ],
+  watchLater: [
+    {
+      movieId: String,
+      title: String,
+      poster: String,
+    },
+  ],
   isVerified: { type: Boolean, default: false },
   admin: { type: Boolean, default: false },
   isCreated: { type: Date, default: Date.now },
   resetPasswordToken: String,
-  resetPasswordExpires: Date
+  resetPasswordExpires: Date,
 });
 export const User = mongoose.model("User", userSchema);

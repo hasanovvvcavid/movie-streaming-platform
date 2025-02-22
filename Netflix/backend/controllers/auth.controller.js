@@ -88,7 +88,7 @@ export async function signup(req, res) {
       .status(201)
       .json({ success: true, user: { ...newUser._doc, password: "" } });
   } catch (error) {
-    console.error("Signup Error:", error); // Log'a bakın
+    console.error("Signup Error:", error);
     res.status(500).json({
       success: false,
       message: error.message || "Signup failed due to server error",
@@ -329,13 +329,10 @@ export const resetPassword = async (req, res) => {
       return res.status(403).json({ error: "Email not verified" });
     }
 
-    // Reset token oluştur
     const resetToken = crypto.randomBytes(20).toString("hex");
     user.resetPasswordToken = resetToken;
     user.resetPasswordExpires = new Date(Date.now() + 3600000);
     await user.save();
-
-    // Email gönder
 
     await sendResetEmail(email, resetToken);
     res.json({ message: "Password reset email sent" });
@@ -351,14 +348,13 @@ export const resetToken = async (req, res) => {
   try {
     const user = await User.findOne({
       resetPasswordToken: token,
-      resetPasswordExpires: { $gt: Date.now() }, // Token süresi dolmamışsa
+      resetPasswordExpires: { $gt: Date.now() },
     });
 
     if (!user) {
       return res.status(400).json({ error: "Invalid or expired token" });
     }
 
-    // Yeni şifreyi hash'le ve kaydet
     const salt = await bcryptjs.genSalt(10);
     user.password = await bcryptjs.hash(password, salt);
     user.resetPasswordToken = undefined;
@@ -368,5 +364,119 @@ export const resetToken = async (req, res) => {
     res.redirect(`${ENV_VARS.CLIENT_LINK}/reset-form?reset=succes`);
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+};
+
+export const getFavoriteMovies = async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ message: "Kullanıcı bulunamadı" });
+
+    res.json(user.favorites);
+  } catch (error) {
+    res.status(500).json({ message: "Sunucu hatası", error });
+  }
+};
+
+export const removeFromFavorites = async (req, res) => {
+  const { userId, movieId } = req.params;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    user.favorites = user.favorites.filter((fav) => fav.movieId !== movieId);
+    await user.save();
+
+    res
+      .status(200)
+      .json({ message: "Removed from favorites", favorites: user.favorites });
+  } catch (error) {
+    res.status(500).json({ message: "Error removing favorite", error });
+  }
+};
+
+export const toggleFavoriteMovie = async (req, res) => {
+  const { userId } = req.params;
+  const { movieId, title, poster } = req.body;
+
+  console.log("Toggle Favorite:", userId, movieId, title, poster);
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    const isFavorite = user.favorites.find((fav) => fav.movieId == movieId);
+
+    if (isFavorite) {
+      user.favorites = user.favorites.filter((fav) => fav.movieId != movieId);
+    } else {
+      user.favorites.push({ movieId, title, poster });
+    }
+
+    await user.save();
+    res.status(200).json({ message: "Success", favorites: user.favorites });
+  } catch (error) {
+    res.status(500).json({ message: "Error toggling favorite", error });
+  }
+};
+export const getLaterMovies = async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ message: "User Not Found" });
+
+    res.json(user.watchLater);
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error", error });
+  }
+};
+
+export const removeLaterMovies = async (req, res) => {
+  const { userId, movieId } = req.params;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    user.watchLater = user.watchLater.filter(
+      (later) => later.movieId !== movieId
+    );
+    await user.save();
+
+    res.status(200).json({
+      message: "Removed from watcHlater",
+      watchLater: user.watchLater,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Error removing watchlater", error });
+  }
+};
+
+export const toggleLaterMovie = async (req, res) => {
+  const { userId } = req.params;
+  const { movieId, title, poster } = req.body;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    const isLater = user.watchLater.find((later) => later.movieId == movieId);
+
+    if (isLater) {
+      user.watchLater = user.watchLater.filter(
+        (later) => later.movieId != movieId
+      );
+    } else {
+      user.watchLater.push({ movieId, title, poster });
+    }
+
+    await user.save();
+    res.status(200).json({ message: "Success", watchLater: user.watchLater });
+  } catch (error) {
+    res.status(500).json({ message: "Error toggling watchLater", error });
   }
 };

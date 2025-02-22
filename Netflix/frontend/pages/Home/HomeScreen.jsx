@@ -1,12 +1,15 @@
 import React from "react";
-import { useAuthStore } from "../../store/authUser";
 import Navbar from "../../components/Navbar/Navbar";
 import { useState } from "react";
 import { Link } from "react-router";
 import { Info, Play } from "lucide-react";
 import useGetTrendingContent from "../../src/hooks/useGetTrendingContent";
 import { useContentStore } from "../../store/content";
-import { MOVIE_CATEGORIES, ORIGINAL_IMG_BASE_URL, TV_CATEGORIES } from "../../src/utils/constants";
+import {
+  MOVIE_CATEGORIES,
+  ORIGINAL_IMG_BASE_URL,
+  TV_CATEGORIES,
+} from "../../src/utils/constants";
 import MovieSlider from "../../components/MovieSlider/MovieSlider";
 import "./HomeScreen.css";
 
@@ -30,7 +33,6 @@ const HomeScreen = () => {
       <div className="relative h-screen text-white ">
         <Navbar />
 
-        {/* COOL OPTIMIZATION HACK FOR IMAGES */}
         {imgLoading && (
           <div className="absolute top-0 left-0 w-full h-full bg-black/70 flex items-center justify-center shimmer -z-10" />
         )}

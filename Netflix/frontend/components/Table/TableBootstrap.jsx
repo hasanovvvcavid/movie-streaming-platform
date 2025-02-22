@@ -4,10 +4,8 @@ import "./TableBootstrap.css";
 import axios from "axios";
 import toast from "react-hot-toast";
 import "react-toastify/dist/ReactToastify.css";
-import FormModal from "../FormModal/FormModal";
 import BasicModal from "../FormModal/FormModal";
 import Swal from "sweetalert2";
-import { formatReleaseDate } from "../../src/utils/dateConverter";
 import { formatReleaseDateToSec } from "../../src/utils/dateConverterToSec";
 
 const MyTable = () => {
@@ -170,7 +168,7 @@ const MyTable = () => {
           >
             Z-A
           </button>
-          <h4>Admin :   </h4>
+          <h4>Admin : </h4>
           <div className="isadmin">
             <div className="checkbox-wrapper-7">
               <input
@@ -227,7 +225,6 @@ const MyTable = () => {
               <div className="search"></div>
             </div>
           </div>
-          
         </div>
       </div>
       <div className="admin-container-table">
