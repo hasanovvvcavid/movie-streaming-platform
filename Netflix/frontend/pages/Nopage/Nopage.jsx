@@ -25,7 +25,7 @@ const Nopage = () => {
                 the home page.
               </p>
 
-              <Link to={"/"} className="bg-white text-black w-40 py-2 px-4 rounded">
+              <Link to={"/"} className="bg-white text-black w-40 py-2 px-4 rounded button-nf">
                 Netflix Home
               </Link>
             
