@@ -4,6 +4,7 @@ import Navbar from "../../components/Navbar/Navbar";
 import { Trash } from "lucide-react";
 import { SMALL_IMG_BASE_URL } from "../../src/utils/constants";
 import toast from "react-hot-toast";
+import Swal from "sweetalert2";
 
 function formatDate(dateString) {
   const date = new Date(dateString);
@@ -47,9 +48,26 @@ const SearchHistoryPage = () => {
   }, []);
 
   const handleDelete = async (entry) => {
+    const result = await Swal.fire({
+          title: "Are you sure?",
+          text: "You won't be able to revert this!",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonText: "Yes, delete it!",
+          cancelButtonText: "No, cancel",
+        });
+    
+        if (!result.isConfirmed) return;
     try {
         await axios.delete(`/api/v1/search/history/${entry.id}`);
         setSearchHistory(searchHistory.filter((item) => item.id !== entry.id));
+         Swal.fire({
+                  title: "Deleted!",
+                  text: "Your comment has been successfully deleted.",
+                  icon: "success",
+                  timer: 2000,
+                  showConfirmButton: false,
+                });
     } catch (error) {
         toast.error("Failed to delete search item");
     }

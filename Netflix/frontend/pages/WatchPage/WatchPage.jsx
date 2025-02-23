@@ -162,6 +162,14 @@ const WatchPage = () => {
         setComments([...comments, newCommentObject]);
         setNewComment("");
         setCurrentRating(0);
+        Swal.fire({
+          title: "Sent!",
+          text: "Your comment has been successfully sent.",
+          icon: "success",
+          timer: 2000,
+          showConfirmButton: false,
+        });
+        
       }
     } catch (error) {
       console.error("Error submitting comment:", error);
@@ -284,7 +292,6 @@ const WatchPage = () => {
     }
   };
 
-
   useEffect(() => {
     const fetchFavorites = async () => {
       try {
@@ -310,7 +317,6 @@ const WatchPage = () => {
   }, [userId, content.id]);
 
   useEffect(() => {
-
     const isMovieInFavorites = !!favorites?.find(
       (fav) => fav.movieId == content.id
     );
@@ -359,7 +365,7 @@ const WatchPage = () => {
 
       if (response.status === 200) {
         const data = await response.json();
-console.log(data);
+        console.log(data);
 
         setLater(data);
       } else {
@@ -374,8 +380,7 @@ console.log(data);
     if (userId) {
       fetchLater();
     }
-  }, [userId, content.id ]);
-
+  }, [userId, content.id]);
 
   useEffect(() => {
     console.log("l", later);
@@ -383,7 +388,7 @@ console.log(data);
     const isMovieInLater = !!later?.find(
       (later) => later.movieId == content.id
     );
-console.log(isMovieInLater);
+    console.log(isMovieInLater);
 
     setHaveLater(isMovieInLater);
   }, [later]);
@@ -407,7 +412,7 @@ console.log(isMovieInLater);
       if (response.ok) {
         const data = await response.json();
         console.log(data);
-        
+
         setLater(data?.watchLater);
 
         if (haveLater) {
@@ -415,7 +420,6 @@ console.log(isMovieInLater);
         } else {
           toast.success("Added to Watch later list! ✅");
         }
-
       } else {
         console.error("Later operation failed");
       }
@@ -611,10 +615,11 @@ console.log(isMovieInLater);
                     </div>
                   </div>
                   <div className="comment-ds">
-                    <p>{comment?.text}</p>
-                    <div className="comment-action">
-                      {(
-                        comment.userId?.username === user?.username) && (
+            
+                    <p className="w-[50%] break-words">{comment?.text}</p>
+              
+                    <div className="comment-action max-w-full overflow-hidden">
+                      {comment.userId?.username === user?.username && (
                         <>
                           <button
                             onClick={() => {
@@ -655,97 +660,106 @@ console.log(isMovieInLater);
           </div>
 
           <div className="comment-form">
-            <textarea
-              name=""
-              id=""
-              placeholder="Write a comment"
-              value={editingComment ? editedText : newComment} 
-              onChange={(e) =>
-                editingComment
-                  ? setEditedText(e.target.value)
-                  : setNewComment(e.target.value)
-              }
-            ></textarea>
-            <div className="rating-section">
-              <h4>Rate this movie:</h4>
-              <div className="star-input">
-                {[...Array(5)].map((_, i) => {
-                  const ratingValue = editingComment
-                    ? editedRating
-                    : currentRating;
-                  const displayRating = hoverRating || ratingValue;
+            <div className="responsive-comment">
+              <textarea
+                name=""
+                id=""
+                placeholder="Write a comment"
+                value={editingComment ? editedText : newComment}
+                onChange={(e) =>
+                  editingComment
+                    ? setEditedText(e.target.value)
+                    : setNewComment(e.target.value)
+                }
+              ></textarea>
+            </div>
+            <div className="responsive-rating">
+              <div className="rating-section">
+                <h4>Rate movie:</h4>
+                <div className="star-input">
+                  {[...Array(5)].map((_, i) => {
+                    const ratingValue = editingComment
+                      ? editedRating
+                      : currentRating;
+                    const displayRating = hoverRating || ratingValue;
 
-                  return (
-                    <i
-                      key={i}
-                      className="fa-solid fa-star"
-                      style={{
-                        color:
-                          i < displayRating
-                            ? "#FFD700"
-                            : "rgba(255, 215, 0, 0.3)",
-                        transition: "color 0.2s ease-in-out",
-                        cursor: "pointer",
-                      }}
-                      onMouseEnter={() => setHoverRating(i + 1)} 
-                      onMouseLeave={() => setHoverRating(0)} 
-                      onClick={() =>
-                        editingComment
-                          ? setEditedRating(i + 1)
-                          : setCurrentRating(i + 1)
-                      } 
-                    ></i>
-                  );
-                })}
+                    return (
+                      <i
+                        key={i}
+                        className="fa-solid fa-star"
+                        style={{
+                          color:
+                            i < displayRating
+                              ? "#FFD700"
+                              : "rgba(255, 215, 0, 0.3)",
+                          transition: "color 0.2s ease-in-out",
+                          cursor: "pointer",
+                        }}
+                        onMouseEnter={() => setHoverRating(i + 1)}
+                        onMouseLeave={() => setHoverRating(0)}
+                        onClick={() =>
+                          editingComment
+                            ? setEditedRating(i + 1)
+                            : setCurrentRating(i + 1)
+                        }
+                      ></i>
+                    );
+                  })}
+                </div>
               </div>
             </div>
-            {editingComment ? (
-              <>
-                <button
-                  onClick={() => handleUpdateComment(editingComment)}
-                  disabled={
-                    isLoading ||
-                    (editedText === initialText &&
-                      editedRating === initialRating)
-                  }
-                  style={{
-                    backgroundColor:
+            <div className="responsive-send">
+              {editingComment ? (
+                <>
+                  <button
+                    onClick={() => handleUpdateComment(editingComment)}
+                    disabled={
                       isLoading ||
                       (editedText === initialText &&
                         editedRating === initialRating)
-                        ? "rgba(255, 215, 0, 0.3)" 
-                        : "#007bff", 
-                    color:
-                      isLoading ||
-                      (editedText === initialText &&
-                        editedRating === initialRating)
-                        ? "#666" 
-                        : "#fff",
-                    cursor:
-                      isLoading ||
-                      (editedText === initialText &&
-                        editedRating === initialRating)
-                        ? "not-allowed" 
-                        : "pointer",
-                    transition: "background-color 0.3s ease",
-                  }}
-                >
-                  {isLoading ? "Saving..." : "Save"}
-                </button>
+                    }
+                    style={{
+                      backgroundColor:
+                        isLoading ||
+                        (editedText === initialText &&
+                          editedRating === initialRating)
+                          ? "rgba(255, 215, 0, 0.3)"
+                          : "#007bff",
+                      color:
+                        isLoading ||
+                        (editedText === initialText &&
+                          editedRating === initialRating)
+                          ? "#666"
+                          : "#fff",
+                      cursor:
+                        isLoading ||
+                        (editedText === initialText &&
+                          editedRating === initialRating)
+                          ? "not-allowed"
+                          : "pointer",
+                      transition: "background-color 0.3s ease",
+                    }}
+                  >
+                    {isLoading ? "Saving..." : "Save"}
+                  </button>
 
-                <button
-                  onClick={() => setEditingComment(null)}
-                  disabled={isLoading}
-                  style={{ backgroundColor: "rgb(143, 10, 10)", color: "#fff" }}
-                >
-                  Cancel
+                  <button
+                    onClick={() => setEditingComment(null)}
+                    disabled={isLoading}
+                    style={{
+                      backgroundColor: "rgb(143, 10, 10)",
+                      color: "#fff",
+                    }}
+                  >
+                    Cancel
+                  </button>
+                </>
+              ) : (
+                <button onClick={handleCommentSubmit} disabled={isLoading}>
+                  {isLoading ? "Sending..." : "Send"}
                 </button>
-              </>
-            ) : (
-              <button onClick={handleCommentSubmit} disabled={isLoading}>
-                {isLoading ? "Sending..." : "Send"}
-              </button>
-            )}
+              )}
+            </div>
           </div>
         </div>
 

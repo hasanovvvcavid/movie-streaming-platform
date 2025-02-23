@@ -14,7 +14,7 @@
   
     .previous-comments {
       max-height: 800px;
-      overflow: auto;
+      overflow-y: auto;
   
       .previous-box {
         border: 1px solid white;
@@ -64,6 +64,7 @@
     .comment-form {
       padding: 50px 0;
       display: flex;
+      flex-direction: column;
       align-items: center;
       gap: 20px;
   
@@ -86,7 +87,6 @@
         margin-bottom: 1rem;
         border: 1px solid white;
         padding: 16px;
-        max-width: 50%;
         margin: 0 !important;
       }
   
@@ -115,7 +115,9 @@
     .comment-action{
       display: flex;
       align-items: center;
+      justify-content: end;
       gap: 20px;
+      width: 100%;
       #delete-button{
         color: white;
         border: none;
@@ -145,4 +147,57 @@
     border-radius: 15px;
     cursor: pointer;
     margin: 8px 0;
+  }
+
+  .responsive-comment{
+    width: 100%;
+  }
+  .responsive-send{
+    display: flex;
+    gap: 20px;
+  }
+
+  @media screen and (max-width: 537px) {
+    .comment-rating{
+      flex-direction: column !important;
+      align-items: start !important;
+      justify-content: center !important;
+      
+      h4{
+        margin: 0 !important;
+        padding: 5px 0;
+      }
+
+    }
+
+    .comment-ds{
+      flex-direction: column !important;
+      align-items: start !important;
+
+      p{
+        width: 100% !important;
+        margin: 15px 0 !important;
+      }
+    }
+    .comment-action{
+      justify-content: start !important;
+    }
+  }
+
+  
+  @media screen and (max-width: 395px) {
+    .comment-action{
+      flex-direction: column !important;
+      align-items: start !important;
+    }
+  }
+
+  .comment-ds-text{
+    width: 60%;
+    height: auto;
+  }
+
+  .comment-ds{
+    gap: 20px;
+    width: 100%;
   }

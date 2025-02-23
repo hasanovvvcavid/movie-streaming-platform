@@ -110,6 +110,7 @@ const Favorites = () => {
     <div className="bg-black min-h-screen text-white">
       <Navbar />
       <div className="favorites-container">
+        <h1 className="text-4xl pt-10 pb-10">Favorites</h1>
         {favorites.length === 0 ? (
           <p>Henüz favorilere eklenmiş film yok.</p>
         ) : (

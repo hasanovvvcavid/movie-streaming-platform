@@ -41,7 +41,7 @@ const Navbar = () => {
             Tv Shows
           </Link>
           <Link to="/history" className="hover:underline">
-            Search History
+            History
           </Link>
 
           {user?.admin && (

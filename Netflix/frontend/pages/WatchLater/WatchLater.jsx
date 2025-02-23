@@ -99,7 +99,7 @@ const WatchLater = () => {
           <div className='bg-black min-h-screen text-white'>
               <Navbar />
               <div className='max-w-6xl mx-auto px-4 py-8'>
-                  <h1 className='text-3xl font-bold mb-8'>Watch Later</h1>
+                  <h1 className='text-3xl font-bold mb-8'>Watch Later List</h1>
                   <div className='flex justify-center items-center h-96'>
                       <p className='text-xl'>No watch later movie found</p>
                   </div>
@@ -111,6 +111,7 @@ const WatchLater = () => {
     <div className="bg-black min-h-screen text-white">
       <Navbar />
       <div className="favorites-container">
+      <h1 className="text-4xl pt-10 pb-10">Watch Later List</h1>
         {later.length === 0 ? (
           <p>No movies added yet</p>
         ) : (

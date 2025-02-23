@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "./Login.css";
 import { Link, useNavigate } from "react-router";
 import { useAuthStore } from "../../store/authUser";
+import toast from "react-hot-toast";
 
 const Login = () => {
 
@@ -16,6 +17,7 @@ const Login = () => {
     setTimeout(() => {
       navigate("/");
     }, 1000);
+    toast.success("Login successful");
 
   };
 
@@ -62,6 +64,9 @@ const Login = () => {
 
           <div className="login-link">
             Don't have any account ? <Link to={"/register"}>Sign Up</Link>
+          </div>
+          <div className="login-link">
+            Forgot your password ? <Link to={"/reset-password"}>Forgot Password</Link>
           </div>
         </div>
       </div>
