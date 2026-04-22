@@ -19,7 +19,7 @@ const Favorites = () => {
 
       try {
         const response = await fetch(
-          `http://localhost:3000/api/v1/auth/${userId}/favorites`
+          `/api/v1/auth/${userId}/favorites`
         );
 
         if (!response.ok) {

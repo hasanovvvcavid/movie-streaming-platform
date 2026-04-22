@@ -261,7 +261,11 @@ export const updateUser = async (req, res) => {
 
     if (file) {
       if (user.image) {
-        fs.unlinkSync(path.join("../frontend/public/", user.image));
+        const oldFilename = path.basename(user.image);
+        const oldFilePath = path.join(__dirname, "..", "uploads", oldFilename);
+        if (fs.existsSync(oldFilePath)) {
+          fs.unlinkSync(oldFilePath);
+        }
       }
       updateData.image = `images/${file.filename}`;
     }
@@ -301,7 +305,11 @@ export const updateProfile = async (req, res) => {
 
     if (file) {
       if (user.image) {
-        fs.unlinkSync(path.join("../frontend/public/", user.image));
+        const oldFilename = path.basename(user.image);
+        const oldFilePath = path.join(__dirname, "..", "uploads", oldFilename);
+        if (fs.existsSync(oldFilePath)) {
+          fs.unlinkSync(oldFilePath);
+        }
       }
       updateData.image = `images/${file.filename}`;
     }

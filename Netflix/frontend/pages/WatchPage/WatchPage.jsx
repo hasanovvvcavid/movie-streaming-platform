@@ -296,7 +296,7 @@ const WatchPage = () => {
     const fetchFavorites = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3000/api/v1/auth/${userId}/favorites`
+          `/api/v1/auth/${userId}/favorites`
         );
 
         if (response.status === 200) {
@@ -327,7 +327,7 @@ const WatchPage = () => {
   const handleFavorite = async () => {
     try {
       const response = await fetch(
-        `http://localhost:3000/api/v1/auth/favorites/toggle/${userId}`,
+        `/api/v1/auth/favorites/toggle/${userId}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -360,7 +360,7 @@ const WatchPage = () => {
   const fetchLater = async () => {
     try {
       const response = await fetch(
-        `http://localhost:3000/api/v1/auth/${userId}/later`
+        `/api/v1/auth/${userId}/later`
       );
 
       if (response.status === 200) {
@@ -397,7 +397,7 @@ const WatchPage = () => {
   const handleLater = async () => {
     try {
       const response = await fetch(
-        `http://localhost:3000/api/v1/auth/later/toggle/${userId}`,
+        `/api/v1/auth/later/toggle/${userId}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

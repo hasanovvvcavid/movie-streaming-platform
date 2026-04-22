@@ -19,7 +19,7 @@ const WatchLater = () => {
   
         try {
           const response = await fetch(
-            `http://localhost:3000/api/v1/auth/${userId}/later`
+            `/api/v1/auth/${userId}/later`
           );
   
           if (!response.ok) {
