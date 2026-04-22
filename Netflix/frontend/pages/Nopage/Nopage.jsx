@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router";
 import "./NoPage.css";
+import Logo from "../../components/Navbar/Logo";
 
 const Nopage = () => {
   return (
@@ -9,7 +10,8 @@ const Nopage = () => {
         <div className="nf-top-container max-w-6xl p-4 ">
           <div className="top-image">
             <Link to={"/"}>
-              <img src="/netflix-logo.png" alt="Netflix" className="h-8" />
+              
+            <Logo />
             </Link>
           </div>
         </div>

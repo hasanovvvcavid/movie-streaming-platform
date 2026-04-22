@@ -3,6 +3,7 @@ import "./Register.css";
 import { Link, useNavigate } from "react-router";
 import { useAuthStore } from "../../store/authUser";
 import toast from "react-hot-toast";
+import Logo from "../../components/Navbar/Logo";
 
 const Register = () => {
   const { searchParams } = new URL(document.location);
@@ -38,7 +39,8 @@ const Register = () => {
     <div className="hero-bg">
       <header className="header">
         <Link to={"/"}>
-          <img src="/netflix-logo.png" alt="logo" />
+          
+          <Logo />
         </Link>
       </header>
 

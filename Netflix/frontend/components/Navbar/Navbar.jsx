@@ -5,6 +5,7 @@ import { useAuthStore } from "../../store/authUser";
 import { Clock, Heart, LogOut, Menu, Search, Watch } from "lucide-react";
 import { useContentStore } from "../../store/content";
 import "./Navbar.css";
+import Logo from "./Logo";
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -17,11 +18,12 @@ const Navbar = () => {
     <header className="max-w-6xl mx-auto flex flex-wrap items-center justify-between p-4 h-20">
       <div className="flex items-center gap-10 z-50">
         <Link to="/">
-          <img
+          {/* <img
             src="/netflix-logo.png"
             alt="Netflix Logo"
             className="w-32 sm:w-40"
-          />
+          /> */}
+          <Logo />
         </Link>
 
         {/* desktop navbar items */}
@@ -38,7 +40,7 @@ const Navbar = () => {
             className="hover:underline"
             onClick={() => setContentType("tv")}
           >
-            Tv Shows
+            Tv
           </Link>
           <Link to="/history" className="hover:underline">
             History
@@ -49,20 +51,32 @@ const Navbar = () => {
               Admin
             </Link>
           )}
+          {/* <Link to="/favorites" className="hover:underline special-mb-heart">
+          <Heart className="size-4 cursor-pointer" />
+            Favorites
+          </Link>
+          <Link to="/watch-later" className="hover:underline special-mb-heart">
+          <Clock className="size-4 cursor-pointer"/>
+            Later
+          </Link> */}
         </div>
       </div>
 
       <div className="flex gap-2 items-center z-50">
-        <Link to={"/search"}>
+        <Link title="Search" to={"/search"}>
           <Search className="size-6 cursor-pointer" />
         </Link>
-        <Link to={"/favorites"}>
+        
+        <div className="hidden sm:flex gap-2 items-center">
+        <Link  title="Favorites"  to={"/favorites"}>
           <Heart className="size-6 cursor-pointer" />
         </Link>
-        <Link to={"/watch-later"}>
+        <Link  title="Watch Later"  to={"/watch-later"}>
           <Clock className="size-6 cursor-pointer" />
         </Link>
-        <Link to={"/profile"}>
+        </div>
+        
+        <Link  title="Profile"  to={"/profile"}>
           <img
             src={`../public/${user?.image}`}
             alt="Avatar"
@@ -107,6 +121,12 @@ const Navbar = () => {
               Admin
             </Link>
           )}
+           <Link to={"/favorites"} className="block hover:underline p-2 special-mb-heart">
+          <Heart className="size-6 cursor-pointer" /> Favorites
+        </Link>
+        <Link to={"/watch-later"} className="block hover:underline p-2 special-mb-heart">
+          <Heart className="size-6 cursor-pointer" /> Watch Later
+        </Link>
         </div>
       )}
     </header>

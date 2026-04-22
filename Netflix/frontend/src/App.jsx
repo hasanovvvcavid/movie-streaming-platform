@@ -58,6 +58,8 @@ function App() {
           <Route path='/admin' element={user?.admin ? <Admin /> : <Navigate to={"/"} />} />
           <Route path='/reset-password' element={!user ? <Reset /> : <Navigate to={"/"} />} />
           <Route path='/reset-password/:token' element= {<ResetForm />} />
+          
+
 
           <Route path="*" element={<Nopage />} />
 

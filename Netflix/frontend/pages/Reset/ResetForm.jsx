@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useState } from "react";
 import { Link, useNavigate, useParams } from "react-router";
 import Swal from "sweetalert2";
+import Logo from "../../components/Navbar/Logo";
 
 const ResetForm = () => {
   const [password, setPassword] = useState("");
@@ -45,13 +46,14 @@ const ResetForm = () => {
     <div className="hero-bg">
       <header className="header">
         <Link to={"/"}>
-          <img src="/netflix-logo.png" alt="logo" />
+          
+          <Logo />
         </Link>
       </header>
 
       <div className="form-container">
         <div className="form-box">
-          <h1>Creat New Password</h1>
+          <h1>Create New Password</h1>
 
           <form onSubmit={handleSubmit}>
             <div className="input-group">

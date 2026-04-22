@@ -140,6 +140,7 @@ const Profile = () => {
               <button type="submit">
                 {/* {isSigningUp ? "Loading..." : "Sign Up"} */}Update
               </button>
+              
             </form>
 
             {/* <div className="login-link">

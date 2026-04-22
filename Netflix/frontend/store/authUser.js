@@ -29,10 +29,16 @@ export const useAuthStore = create((set) => ({
     set({ isLoggingIn: true });
     try {
       const response = await axios.post("/api/v1/auth/login", credentials);
-      set({ user: response.data.user, isLoggingIn: false });
+      if (response.data?.user) {
+        set({ user: response.data.user, isLoggingIn: false });
+        toast.success("Login successful"); 
+      } else {
+        throw new Error("Unexpected response from server");
+      }
     } catch (error) {
       set({ isLoggingIn: false, user: null });
-      toast.error(error.response.data.message || "Login failed");
+      const errorMessage = error.response?.data?.message || "Login failed";
+      toast.error(errorMessage);
     }
   },
   logout: async () => {

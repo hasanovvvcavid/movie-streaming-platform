@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import Logo from "../../components/Navbar/Logo";
 
 const Reset = () => {
   const [email, setEmail] = useState("");
@@ -42,7 +43,8 @@ const Reset = () => {
     <div className="hero-bg">
       <header className="header">
         <Link to={"/"}>
-          <img src="/netflix-logo.png" alt="logo" />
+          
+          <Logo />
         </Link>
       </header>
 
@@ -72,6 +74,7 @@ const Reset = () => {
             Don't have any account ? <Link to={"/register"}>Sign Up</Link>
           </div>
         </div>
+       
       </div>
     </div>
   );

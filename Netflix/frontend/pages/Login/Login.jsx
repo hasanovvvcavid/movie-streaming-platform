@@ -3,6 +3,7 @@ import "./Login.css";
 import { Link, useNavigate } from "react-router";
 import { useAuthStore } from "../../store/authUser";
 import toast from "react-hot-toast";
+import Logo from "../../components/Navbar/Logo";
 
 const Login = () => {
 
@@ -17,8 +18,7 @@ const Login = () => {
     setTimeout(() => {
       navigate("/");
     }, 1000);
-    toast.success("Login successful");
-
+    // toast.success("Login successful");
   };
 
 
@@ -26,7 +26,7 @@ const Login = () => {
     <div className="hero-bg">
       <header className="header">
         <Link to={"/"}>
-          <img src="/netflix-logo.png" alt="logo" />
+        <Logo />
         </Link>
       </header>
 

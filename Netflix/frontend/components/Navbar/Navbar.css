@@ -3,3 +3,9 @@
     height: 30px !important;
     border-radius: 50%;
 }
+.special-mb-heart{
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    
+}
